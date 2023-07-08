@@ -37,7 +37,6 @@ class Database:
             print('Collection created...')
 
 
-
     def Insert_Sample_Data(self, collection_name):
         data = {
         'location': {
@@ -51,10 +50,30 @@ class Database:
         'timestamp': datetime.datetime.now()
         }
 
-        collection_name = self.db['Weather']
+        collection_name = self.db[collection_name]
         collection_name.insert_one(data)
         print('Insert 1 dataset...')
 
+    def Create_Sample_Dataset(self, collection_name):
+        dataList = []
+        for i in range(1000,0,-1):
+            timeOffset = datetime.timedelta(seconds = i)
 
+            data = {
+            'location': {
+            'city': 'Wippeham',
+            'street' : 'Bruck',
+            'street number' : 8
+            },
+            'temperature': np.random.randint(0, 30),
+            'windSpeed' : np.random.randint(0,50),
+            'pressure' : np.random.randint(1000, 1050),
+            'timestamp': datetime.datetime.now() - timeOffset
+            }
+            dataList.append(data)
+
+        collection_name = self.db[collection_name]
+        collection_name.insert_many(dataList)
+        print('Create test dataset...')
 
 
