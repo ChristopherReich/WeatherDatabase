@@ -1,22 +1,42 @@
 # pip install requests
 
 import requests
+from requests.structures import CaseInsensitiveDict
 import datetime
+from geopy.geocoders import Nominatim
 
 
 class Location:
-    def __init__(self, city, street, street_number, lat, lon):
+    def __init__(self, city, street, street_number):
+        self.api_key = 'c8b0afac8bc6ad190b6527d7d81cf0ae'
         self.city = city
         self.street = street
         self.street_number = street_number
-        self.lat = lat
-        self.lon = lon
+        self.lat, self.lon = self.GetCoordinates()
+
+
+
+    def GetCoordinates(self):
+        #address we need to geocode
+        loc = f'{self.city}, {self.street} {self.street_number}'
+
+        #making an instance of Nominatim class
+        geolocator = Nominatim(user_agent="my_request")
+        
+        #applying geocode method to get the location
+        location = geolocator.geocode(loc)
+        
+        return location.latitude, location.longitude
+
+
+
+
 
 
 
     def GetWeatherData(self):
-        api_key = 'c8b0afac8bc6ad190b6527d7d81cf0ae'
-        url = f'https://api.openweathermap.org/data/2.5/weather?lat={self.lat}&lon={self.lon}&appid={api_key}'
+        
+        url = f'https://api.openweathermap.org/data/2.5/weather?lat={self.lat}&lon={self.lon}&appid={self.api_key}'
         
         r = requests.get(url).json()
         data = {

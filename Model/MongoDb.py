@@ -21,9 +21,32 @@ class Database:
             self.db = client[self.database_name]
             print('Database already exists.')
         else:
-            client.get_database(database_name)
+            client.get_database(self.database_name)
             print('Database created...')
 
+
+
+
+    def Connect_Cloud_Database(self):
+        from pymongo.mongo_client import MongoClient
+        password = '2DgdV25hHbguPSTY'
+        uri = f'mongodb+srv://Simon:{password}@sampleweather.dklv8xc.mongodb.net/?retryWrites=true&w=majority'
+        # Create a new client and connect to the server
+        client = MongoClient(uri)
+        # Send a ping to confirm a successful connection
+        try:
+            client.admin.command('ping')
+            print("Pinged your deployment. You successfully connected to MongoDB!")
+        except Exception as e:
+            print(e)
+
+        if self.database_name in client.list_database_names():
+            self.db = client[self.database_name]
+            print('Cloud Database already exists.')
+        else:
+            client.get_database(self.database_name)
+            self.db = client[self.database_name]
+            print('Cloud Database created...')
 
 
 
@@ -56,20 +79,21 @@ class Database:
 
     def Insert_Sample_Data(self, collection_name):
         data = {
-        'location': {
-        'city': 'Wippenham',
-        'street' : 'Bruck',
-        'street number' : 8
-        },
-        'temperature': np.random.randint(0, 30),
-        'windSpeed' : np.random.randint(0,50),
-        'pressure' : np.random.randint(1000, 1050),
-        'timestamp': datetime.datetime.now()
+            'location': {
+                'city': 'Wippenham',
+                'street' : 'Bruck',
+                'street number' : 8
+            },
+            'timestamp': datetime.datetime.now(),
+            'temperature': np.random.randint(0, 30),
+            'humidity' : np.random.randint(0,100),
+            'windSpeed' : np.random.randint(0,50),
+            'pressure' : np.random.randint(1000, 1050)           
         }
 
         collection_name = self.db[collection_name]
         collection_name.insert_one(data)
-        print('Insert 1 dataset...')
+        print('Insert 1 sample dataset...')
 
 
 
@@ -79,15 +103,16 @@ class Database:
             timeOffset = datetime.timedelta(seconds = i)
 
             data = {
-            'location': {
-            'city': 'Wippeham',
-            'street' : 'Bruck',
-            'street number' : 8
-            },
-            'temperature': np.random.randint(0, 30),
-            'windSpeed' : np.random.randint(0,50),
-            'pressure' : np.random.randint(1000, 1050),
-            'timestamp': datetime.datetime.now() - timeOffset
+                'location': {
+                    'city': 'Wippenham',
+                    'street' : 'Bruck',
+                    'street number' : 8
+                },
+                'timestamp': datetime.datetime.now() - timeOffset,
+                'temperature': np.random.randint(0, 30),
+                'humidity' : np.random.randint(0,100),
+                'windSpeed' : np.random.randint(0,50),
+                'pressure' : np.random.randint(1000, 1050)           
             }
             dataList.append(data)
 
