@@ -67,8 +67,8 @@ class Database:
 
 
 
-    def Insert_OpenWeather_Data(self, home, collection_name):
-        data = home.GetWeatherData()
+    def Insert_OpenWeather_Data(self, location, collection_name):
+        data = location.GetWeatherData()
         collection_name = self.db[collection_name]
         collection_name.insert_one(data)
         print('Insert 1 dataset...')
@@ -77,12 +77,12 @@ class Database:
 
 
 
-    def Insert_Sample_Data(self, collection_name):
+    def Insert_Sample_Data(self, location, collection_name):
         data = {
             'location': {
-                'city': 'Wippenham',
-                'street' : 'Bruck',
-                'street number' : 8
+                'city': location.city,
+                'street' : location.street,
+                'street number' : location.street_number
             },
             'timestamp': datetime.datetime.now(),
             'temperature': np.random.randint(0, 30),
@@ -97,16 +97,16 @@ class Database:
 
 
 
-    def Create_Sample_Dataset(self, collection_name):
+    def Create_Sample_Dataset(self, location, collection_name):
         dataList = []
-        for i in range(1000,0,-1):
-            timeOffset = datetime.timedelta(seconds = i)
+        for i in range(24*4,0,-1):
+            timeOffset = datetime.timedelta(minutes = i*15)
 
             data = {
                 'location': {
-                    'city': 'Wippenham',
-                    'street' : 'Bruck',
-                    'street number' : 8
+                    'city': location.city,
+                    'street' : location.street,
+                    'street number' : location.street_number
                 },
                 'timestamp': datetime.datetime.now() - timeOffset,
                 'temperature': np.random.randint(0, 30),
