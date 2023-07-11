@@ -6,8 +6,8 @@ from Model import OpenWeather
 
 
 class Database:
-    global db
-    global database_name
+    #global db
+    #global database_name
 
 
     def __init__(self, name):
@@ -42,7 +42,7 @@ class Database:
 
         if self.database_name in client.list_database_names():
             self.db = client[self.database_name]
-            print('Cloud Database already exists.')
+            pass
         else:
             client.get_database(self.database_name)
             self.db = client[self.database_name]
@@ -52,7 +52,7 @@ class Database:
 
     def Create_Collection(self, collection_name):
         if collection_name in self.db.list_collection_names():
-            print('Collection already exists.')
+            pass
         else:
             self.db.create_collection(
                 collection_name,
@@ -72,8 +72,6 @@ class Database:
         collection_name = self.db[collection_name]
         collection_name.insert_one(data)
         print('Insert 1 dataset...')
-
-
 
 
 
@@ -119,5 +117,16 @@ class Database:
         collection_name = self.db[collection_name]
         collection_name.insert_many(dataList)
         print('Create test dataset...')
+
+    
+    def FindData(self, collection_name, query):
+        collection_name = self.db[collection_name]
+
+        
+        results = collection_name.find(query)
+        return results
+
+
+        
 
 
