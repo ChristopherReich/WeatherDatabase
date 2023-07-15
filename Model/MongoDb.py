@@ -1,17 +1,15 @@
 from pymongo import MongoClient
 import datetime
 import numpy as np
-from Model import OpenWeather
+from model import OpenWeather
 
 
 
 class Database:
-    #global db
-    #global database_name
-
 
     def __init__(self, name):
         self.database_name = name
+        self.Connect_Cloud_Database()
         
 
 
@@ -126,6 +124,10 @@ class Database:
         results = collection_name.find(query)
         return results
 
+    def getAll(self, collection_name):
+        collection_name = self.db[collection_name]
+        results = collection_name.find()
+        return results
 
         
 
