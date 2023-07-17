@@ -1,7 +1,8 @@
 # -*- encoding:utf-8 -*-
 from core.Controller import Controller
 from core.Core import Core
-
+from model import MongoDb
+from model import OpenWeather
 
 """
     Main controller. It will be responsible for program's main screen behavior.
@@ -27,9 +28,11 @@ class HomeController(Controller):
         elif caption == "noch keine funktion":
             c = Core.openController("add")
             c.main()
-        elif caption == "noch keine funktion":
-            c = Core.openController("showTreeView")
-            c.main()
+        elif caption == "Create sample data":
+            home = OpenWeather.Location('Wippenham', 'Bruck', 8)
+            self.database = MongoDb.Database('WeatherDatabase')
+            self.database.Create_Collection('WeatherCollection')
+            self.database.Create_Sample_Dataset(home, 'WeatherCollection')
             
     """
         @Override

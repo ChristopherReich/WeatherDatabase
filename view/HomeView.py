@@ -17,7 +17,7 @@ class HomeView(tk.Tk, View):
     BTN_CAPTION = [
         "Show data",
         "noch keine funktion",
-        "noch keine funktion",
+        "Create sample data",
         "Exit"
     ]
     
@@ -30,7 +30,7 @@ class HomeView(tk.Tk, View):
     """
     def __init__(self, controller):
         super().__init__()
-        self.title("Customers Manager")
+        self.title("NoSql-Database")
         self.homeController = controller
         
         self._make_mainFrame()

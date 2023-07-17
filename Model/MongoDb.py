@@ -9,7 +9,7 @@ class Database:
 
     def __init__(self, name):
         self.database_name = name
-        self.Connect_Cloud_Database()
+        self.Connect_Database() # working on local database, because cloud database needs static ip adress
         
 
 
@@ -17,7 +17,6 @@ class Database:
         client = MongoClient('mongodb://127.0.0.1:27017')
         if self.database_name in client.list_database_names():
             self.db = client[self.database_name]
-            print('Database already exists.')
         else:
             client.get_database(self.database_name)
             print('Database created...')

@@ -104,8 +104,11 @@ class ShowView(tk.Tk, View):
 
         # Insert data into the Treeview
         for row in data:
-            values = (tuple(row.values()))
-            self.treeview.insert("", tk.END, values=values)
+            val=[]
+            for col in self.treeview['columns']:
+                val.append(row[col])
+
+            self.treeview.insert('', tk.END, values=val)
 
 
         # Put tree view on frame
