@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from datetime import datetime
+from datetime import datetime , timedelta
 import numpy as np
 from model import OpenWeather
 import json
@@ -99,7 +99,7 @@ class Database:
     def Create_Sample_Dataset(self, location, collection_name):
         dataList = []
         for i in range(24*4,0,-1):
-            timeOffset = datetime.timedelta(minutes = i*15)
+            timeOffset = timedelta(minutes = i*15)
 
             data = {
                 'location': {
@@ -107,7 +107,7 @@ class Database:
                     'street' : location.street,
                     'street number' : location.street_number
                 },
-                'timestamp': datetime.now(), #- timeOffset,
+                'timestamp': datetime.now() - timeOffset,
                 'temperature': np.random.randint(0, 30),
                 'humidity' : np.random.randint(0,100),
                 'windSpeed' : np.random.randint(0,50),
@@ -139,40 +139,36 @@ class Database:
         json_data=json.loads(json_util.dumps(list_cur))
         
         data =json_data
-        print(type(data))
-        print(data[1].keys())
         
         temperatures = [entry['temperature'] for entry in data]
         timestamps = [entry['timestamp']['$date'] for entry in data]
-        print(timestamps[1])
-        ts =[datetime.fromtimestamp(time) for time in timestamps]
+        ts =[datetime.fromtimestamp(time/ 1000.0) for time in timestamps]
         tsl =[datetime.timestamp(time) for time in ts]
-        print(tsl)
-        #dates = pd.to_datetime(ts, unit='s')
+        dates = pd.to_datetime(tsl, unit='s')
 
-        # fig = go.Figure()
-        # fig.add_trace(go.Scatter(x=dates, y=temperatures, name='Temperatur (°C)'))
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=dates, y=temperatures, name='Temperatur (°C)'))
         
-        # fig.update_layout(
-        #     title='Temperaturverlauf',
-        #     xaxis_title='Zeit',
-        #     yaxis_title='Temperatur (°C)',
-        #     xaxis=dict(
-        #         rangeselector=dict(
-        #             buttons=list([
-        #                 dict(count=1, label='1 Tag', step='day', stepmode='backward'),
-        #                 dict(count=3, label='3 Tage', step='day', stepmode='backward'),
-        #                 dict(count=7, label='1 Woche', step='day', stepmode='backward'),
-        #                 dict(step='all')
-        #             ])
-        #         ),
-        #         rangeslider=dict(visible=True),
-        #         type='date'
-        #     ),
-        #     template= 'seaborn'  # Style "seaborn-whitegrid" verwenden
-        # )
+        fig.update_layout(
+            title='Temperaturverlauf',
+            xaxis_title='Zeit',
+            yaxis_title='Temperatur (°C)',
+            xaxis=dict(
+                rangeselector=dict(
+                    buttons=list([
+                        dict(count=1, label='1 Tag', step='day', stepmode='backward'),
+                        dict(count=3, label='3 Tage', step='day', stepmode='backward'),
+                        dict(count=7, label='1 Woche', step='day', stepmode='backward'),
+                        dict(step='all')
+                    ])
+                ),
+                rangeslider=dict(visible=True),
+                type='date'
+            ),
+            template= 'seaborn'  # Style "seaborn-whitegrid" verwenden
+        )
         
-        # fig.show()   
+        fig.show()   
         return json_data
 
 
