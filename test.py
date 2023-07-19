@@ -8,12 +8,20 @@ def get_weather_data(city):
     url = f'http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api_key}&units=metric'
     response = requests.get(url)
     data = response.json()
+    print(type(data))
     return data
 
 # Funktion zum Erstellen des interaktiven Diagramms
 def create_plot(data):
+    # for i in data['list']:
+    #     print(i)
+    
     temperatures = [entry['main']['temp'] for entry in data['list']]
+    
     timestamps = [entry['dt'] for entry in data['list']]
+    
+    print(type(timestamps))
+    
     dates = pd.to_datetime(timestamps, unit='s')
     
     fig = go.Figure()

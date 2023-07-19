@@ -1,9 +1,13 @@
 from pymongo import MongoClient
-import datetime
+from datetime import datetime
 import numpy as np
 from model import OpenWeather
 import json
+from bson import json_util
 
+
+import pandas as pd
+import plotly.graph_objects as go
 
 class Database:
 
@@ -79,7 +83,7 @@ class Database:
                 'street' : location.street,
                 'street number' : location.street_number
             },
-            'timestamp': datetime.datetime.now(),
+            'timestamp': datetime.now(),
             'temperature': np.random.randint(0, 30),
             'humidity' : np.random.randint(0,100),
             'windSpeed' : np.random.randint(0,50),
@@ -103,7 +107,7 @@ class Database:
                     'street' : location.street,
                     'street number' : location.street_number
                 },
-                'timestamp': datetime.datetime.now() - timeOffset,
+                'timestamp': datetime.now(), #- timeOffset,
                 'temperature': np.random.randint(0, 30),
                 'humidity' : np.random.randint(0,100),
                 'windSpeed' : np.random.randint(0,50),
@@ -131,9 +135,44 @@ class Database:
     def getDataInJSON(self, collection_name):
         collection_name = self.db[collection_name]
         results = collection_name.find()
-        #print(tuple(results[0].keys()))
         list_cur = list(results)
-        json_data=json.dumps(list_cur, indent=4, sort_keys=True, default=str)        
+        json_data=json.loads(json_util.dumps(list_cur))
+        
+        data =json_data
+        print(type(data))
+        print(data[1].keys())
+        
+        temperatures = [entry['temperature'] for entry in data]
+        timestamps = [entry['timestamp']['$date'] for entry in data]
+        print(timestamps[1])
+        ts =[datetime.fromtimestamp(time) for time in timestamps]
+        tsl =[datetime.timestamp(time) for time in ts]
+        print(tsl)
+        #dates = pd.to_datetime(ts, unit='s')
+
+        # fig = go.Figure()
+        # fig.add_trace(go.Scatter(x=dates, y=temperatures, name='Temperatur (°C)'))
+        
+        # fig.update_layout(
+        #     title='Temperaturverlauf',
+        #     xaxis_title='Zeit',
+        #     yaxis_title='Temperatur (°C)',
+        #     xaxis=dict(
+        #         rangeselector=dict(
+        #             buttons=list([
+        #                 dict(count=1, label='1 Tag', step='day', stepmode='backward'),
+        #                 dict(count=3, label='3 Tage', step='day', stepmode='backward'),
+        #                 dict(count=7, label='1 Woche', step='day', stepmode='backward'),
+        #                 dict(step='all')
+        #             ])
+        #         ),
+        #         rangeslider=dict(visible=True),
+        #         type='date'
+        #     ),
+        #     template= 'seaborn'  # Style "seaborn-whitegrid" verwenden
+        # )
+        
+        # fig.show()   
         return json_data
 
 

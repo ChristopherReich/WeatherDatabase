@@ -8,6 +8,7 @@ def get_weather_data(city):
     url = f'http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api_key}&units=metric'
     response = requests.get(url)
     data = response.json()
+    print(type(data))
     return data
 
 # Funktion zum Erstellen des interaktiven Diagramms
