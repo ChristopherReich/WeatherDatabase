@@ -16,7 +16,7 @@ class HomeView(tk.Tk, View):
     PAD = 10
     BTN_CAPTION = [
         "Show data",
-        "noch keine funktion",
+        "Graph",
         "Create sample data",
         "Exit"
     ]

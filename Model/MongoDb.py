@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import datetime
 import numpy as np
 from model import OpenWeather
-
+import json
 
 
 class Database:
@@ -127,7 +127,13 @@ class Database:
         collection_name = self.db[collection_name]
         results = collection_name.find()
         return results
-
-        
+    
+    def getDataInJSON(self, collection_name):
+        collection_name = self.db[collection_name]
+        results = collection_name.find()
+        #print(tuple(results[0].keys()))
+        list_cur = list(results)
+        json_data=json.dumps(list_cur, indent=4, sort_keys=True, default=str)        
+        return json_data
 
 

@@ -25,9 +25,11 @@ class HomeController(Controller):
         if caption == "Show data":
             c = Core.openController("show")
             c.main()
-        elif caption == "noch keine funktion":
-            c = Core.openController("add")
-            c.main()
+        elif caption == "Graph":
+            #c = Core.openController("add")
+            self.database = MongoDb.Database('WeatherDatabase')
+            self.database.getDataInJSON('WeatherCollection')
+            #c.main()
         elif caption == "Create sample data":
             home = OpenWeather.Location('Wippenham', 'Bruck', 8)
             self.database = MongoDb.Database('WeatherDatabase')

@@ -29,11 +29,6 @@ class Location:
         return location.latitude, location.longitude
 
 
-
-
-
-
-
     def GetWeatherData(self):
         
         url = f'https://api.openweathermap.org/data/2.5/weather?lat={self.lat}&lon={self.lon}&appid={self.api_key}'
