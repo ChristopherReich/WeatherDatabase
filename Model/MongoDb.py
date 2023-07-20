@@ -120,7 +120,7 @@ class Database:
         print('Create test dataset...')
 
     
-    def FindData(self, collection_name, query):
+    def findData(self, collection_name, query):
         collection_name = self.db[collection_name]
 
         

@@ -38,14 +38,14 @@ class ShowView(tk.Tk, View):
         Creates view's frame.
     """ 
     def _make_mainFrame(self):
-        self.frame_main = ttk.Frame(self)
-        self.frame_main.pack(padx=self.PAD, pady=self.PAD)
+        self.mainFrame = ttk.Frame(self)
+        self.mainFrame.pack(padx=self.PAD, pady=self.PAD)
         
     """
         Sets view's title.
     """
     def _make_title(self):
-        title = ttk.Label(self.frame_main, text="Datenbank Name", font=("Helvetica", 20))
+        title = ttk.Label(self.mainFrame, text="Datenbank Name", font=("Helvetica", 20))
         title.pack(padx=self.PAD, pady=self.PAD)
     
 
@@ -54,7 +54,7 @@ class ShowView(tk.Tk, View):
         # todo: geht noch nicht
     """
     def _contextMenu_display(self, event):
-        self.contextMenu = tk.Menu(self.frame_main, tearoff=0)
+        self.contextMenu = tk.Menu(self.mainFrame, tearoff=0)
         self.contextMenu.add_command(label="Edit", command=lambda: self.showTreeViewController.btnEdit(self.contextMenu_selectedId))
         self.contextMenu.add_command(label="Delete", command=self.showTreeViewController.btnDel)
         
@@ -82,7 +82,7 @@ class ShowView(tk.Tk, View):
     def _show_data(self):
 
         data = self.showController.getData()
-        self.frame_data = tk.Frame(self.frame_main)
+        self.frame_data = tk.Frame(self.mainFrame)
         self.frame_data.pack(fill="x")
         
         frame_dataView = tk.Frame(self.frame_data)

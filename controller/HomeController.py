@@ -12,7 +12,7 @@ class HomeController(Controller):
     #        Constructor
     #-----------------------------------------------------------------------
     def __init__(self):
-        self.homeView = self.loadView("Home")
+        self.homeView = self.loadView("home")
     
     
     #-----------------------------------------------------------------------
@@ -25,11 +25,9 @@ class HomeController(Controller):
         if caption == "Show data":
             c = Core.openController("show")
             c.main()
-        elif caption == "Graph":
-            #c = Core.openController("add")
-            self.database = MongoDb.Database('WeatherDatabase')
-            self.database.getDataInJSON('WeatherCollection')
-            #c.main()
+        elif caption == "Show graph":
+            c = Core.openController("graph")
+            c.main()
         elif caption == "Create sample data":
             home = OpenWeather.Location('Wippenham', 'Bruck', 8)
             self.database = MongoDb.Database('WeatherDatabase')

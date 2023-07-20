@@ -2,6 +2,7 @@ from core.Core import Core
 from model import MongoDb
 from core.Controller import Controller
 from tkinter import messagebox
+import matplotlib.pyplot as plt
 
 
 """
@@ -12,8 +13,11 @@ class GraphController(Controller):
     #        Constructor
     #-----------------------------------------------------------------------
     def __init__(self):
-        self.database = MongoDb.Database('WeatherDatabase')
-        self.showView = self.loadView("Graph")
+        self.databaseName = 'WeatherDatabase'
+        self.collectionName = 'WeatherCollection'
+        self.database = MongoDb.Database(self.databaseName)
+        self.figure = plt.figure()
+        self.graphView = self.loadView("graph")
         self.core = Core()
         
     
@@ -23,13 +27,48 @@ class GraphController(Controller):
     """
         @return All customers in database
     """
-    def getDataInJSON(self):
-        data = self.database.getDataInJSON('WeatherCollection')
+    def getData(self):
+        data = self.database.getAll(self.collectionName)
         return data
+    
+    def closeAllWindows(self):
+        self.figure.close()
+    
+
+    def btnClicked(self, caption):
+        data = self.database.getAll(self.collectionName)
+        timestamps = []
+        temperatures = []
+        humidity = []
+        windSpeed = []
+
+        for result in data:
+            timestamps.append(result['timestamp'])
+            temperatures.append(result['temperature'])
+            humidity.append(result['humidity'])
+            windSpeed.append(result['windSpeed'])
+        plt.clf()
+        if caption == "Show temperature":           
+            plt.plot(timestamps, temperatures)
+            plt.ylabel('Temperature')       
+            
+        elif caption == "Show humidity":
+            plt.plot(timestamps, humidity)
+            plt.ylabel('humidty')
+            
+        elif caption == "Show windspeed":
+            plt.plot(timestamps, temperatures)
+            plt.ylabel('windspeed')
+      
+        plt.xlabel('Timestamp')
+        plt.title('Temperature over Time in Wippenham')
+        plt.xticks(rotation=45)
+        plt.show()
+            
     
 
     """
         @Override
     """
     def main(self):
-        self.showView.main()
+        self.graphView.main()
