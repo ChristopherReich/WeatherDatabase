@@ -33,6 +33,9 @@ class GraphController(Controller):
     def closeAllWindows(self):
         plt.close('all')
     
+    """
+        @behaviour when a button is clicked
+    """
     def btnClicked(self, caption):
         data = self.database.getAll(self.collectionName)
         timestamps = []
@@ -47,7 +50,7 @@ class GraphController(Controller):
             windSpeed.append(result['windSpeed'])
 
         plt.clf()
-        
+
         if caption == "Show temperature":           
             plt.plot(timestamps, temperatures)
             plt.ylabel('Temperature')       
