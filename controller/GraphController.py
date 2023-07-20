@@ -32,7 +32,7 @@ class GraphController(Controller):
         return data
     
     def closeAllWindows(self):
-        self.figure.close()
+        pass
     
 
     def btnClicked(self, caption):
@@ -47,7 +47,7 @@ class GraphController(Controller):
             temperatures.append(result['temperature'])
             humidity.append(result['humidity'])
             windSpeed.append(result['windSpeed'])
-        plt.clf()
+        self.figure.clf()
         if caption == "Show temperature":           
             plt.plot(timestamps, temperatures)
             plt.ylabel('Temperature')       

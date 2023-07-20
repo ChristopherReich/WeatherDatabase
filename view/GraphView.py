@@ -63,7 +63,7 @@ class GraphView(tk.Tk, View):
         
         for caption in self.BTN_CAPTION:
             if caption == "Exit":
-                self.graphController.closeAllWindows()
+                #self.graphController.closeAllWindows()
                 btn = ttk.Button(frame_btn, text=caption, command=self.destroy)
             else:
                 btn = ttk.Button(frame_btn, text=caption, command=lambda txt=caption: self.graphController.btnClicked(txt))
