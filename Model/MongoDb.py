@@ -139,7 +139,7 @@ class Database:
         json_data=json.loads(json_util.dumps(list_cur))
         
         data =json_data
-        
+            
         temperatures = [entry['temperature'] for entry in data]
         timestamps = [entry['timestamp']['$date'] for entry in data]
         ts =[datetime.fromtimestamp(time/ 1000.0) for time in timestamps]
