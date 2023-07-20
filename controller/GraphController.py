@@ -16,7 +16,6 @@ class GraphController(Controller):
         self.databaseName = 'WeatherDatabase'
         self.collectionName = 'WeatherCollection'
         self.database = MongoDb.Database(self.databaseName)
-        self.figure = plt.figure()
         self.graphView = self.loadView("graph")
         self.core = Core()
         
@@ -32,9 +31,8 @@ class GraphController(Controller):
         return data
     
     def closeAllWindows(self):
-        pass
+        plt.close('all')
     
-
     def btnClicked(self, caption):
         data = self.database.getAll(self.collectionName)
         timestamps = []
@@ -47,7 +45,9 @@ class GraphController(Controller):
             temperatures.append(result['temperature'])
             humidity.append(result['humidity'])
             windSpeed.append(result['windSpeed'])
-        self.figure.clf()
+
+        plt.clf()
+        
         if caption == "Show temperature":           
             plt.plot(timestamps, temperatures)
             plt.ylabel('Temperature')       
@@ -63,9 +63,7 @@ class GraphController(Controller):
         plt.xlabel('Timestamp')
         plt.title('Temperature over Time in Wippenham')
         plt.xticks(rotation=45)
-        plt.show()
-            
-    
+        plt.show()  
 
     """
         @Override
