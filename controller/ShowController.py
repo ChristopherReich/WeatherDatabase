@@ -16,6 +16,10 @@ class ShowController(Controller):
         self.showView = self.loadView("show")
         self.core = Core()
         
+    def btnClicked(self, caption):
+        if caption == "Get Selection":
+            self.showView._get_item()
+        
     
     #-----------------------------------------------------------------------
     #        Methods

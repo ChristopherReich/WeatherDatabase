@@ -14,6 +14,10 @@ class ShowView(tk.Tk, View):
     PAD = 10
     COLUMN_WIDTH = 200
     
+    BTN_CAPTION = [
+        "Get Selection",
+    ]
+    
     
     #-----------------------------------------------------------------------
     #        Constructor
@@ -29,11 +33,23 @@ class ShowView(tk.Tk, View):
         self._make_mainFrame()
         self._make_title()
         self._show_data()
-    
-   
+        self._make_options()
+        for column in self.treeview["columns"]:
+            self._make_label(column)
+            self._make_textbox()
+
     #-----------------------------------------------------------------------
     #        Methods
     #-----------------------------------------------------------------------
+    def _make_label(self,column):
+        self.lbl1 = tk.Label(self, text=column,font=('Helvetica', 11), width=20,anchor="c" )  
+        self.lbl1.pack(padx=self.PAD, pady=self.PAD) 
+        pass
+    def _make_textbox(self):
+        self.text1 = tk.Text(self,  height=1, width=10,bg='black') 
+        self.text1.pack(padx=self.PAD, pady=self.PAD) 
+
+    
     """
         Creates view's frame.
     """ 
@@ -74,6 +90,27 @@ class ShowView(tk.Tk, View):
             # Open context menu
             self.contextMenu.selection = self.treeview.set(rowSelected)
             self.contextMenu.post(event.x_root, event.y_root)
+    
+    
+
+    """
+        Creates view's options.
+    """
+    def _make_options(self):
+        frame_btn = ttk.Frame(self.mainFrame)
+        frame_btn.pack(fill="x")
+        
+        for caption in self.BTN_CAPTION:
+            if caption == "Exit":
+                btn = ttk.Button(frame_btn, text=caption, command=self.destroy)
+            else:
+                btn = ttk.Button(frame_btn, text=caption, command=lambda txt=caption: self.showController.btnClicked(txt))
+            
+            btn.pack(fill="x")
+    
+    def _get_item(self):
+        selected_item = self.treeview.focus()
+        self.item = self.treeview.item(selected_item)
 
 
     """
