@@ -19,6 +19,9 @@ class ShowController(Controller):
     def btnClicked(self, caption):
         if caption == "Get Selection":
             self.showView._get_item()
+        elif caption == "Update Data":
+            self.showView._update_data()
+       
         
     
     #-----------------------------------------------------------------------

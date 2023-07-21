@@ -7,15 +7,23 @@ from datetime import datetime
 """
     View responsible for showing registered customers.
 """
+
+
+def getTemperature(s):
+    split_data = str(s).split(',')
+    return split_data[7]
+
 class ShowView(tk.Tk, View):
     #-----------------------------------------------------------------------
     #        Constants
     #-----------------------------------------------------------------------
-    PAD = 10
+    PAD = 12
     COLUMN_WIDTH = 200
+    TEMPERATURE = ""
     
     BTN_CAPTION = [
         "Get Selection",
+        "Update Data"
     ]
     
     
@@ -34,22 +42,29 @@ class ShowView(tk.Tk, View):
         self._make_title()
         self._show_data()
         self._make_options()
-        for column in self.treeview["columns"]:
-            self._make_label(column)
-            self._make_textbox()
+        self._make_field_Temp()
+        
+        # for column in self.treeview["columns"]:
+        #     self._make_label(column)
+        #     self._make_textbox()
+
 
     #-----------------------------------------------------------------------
     #        Methods
     #-----------------------------------------------------------------------
-    def _make_label(self,column):
-        self.lbl1 = tk.Label(self, text=column,font=('Helvetica', 11), width=20,anchor="c" )  
-        self.lbl1.pack(padx=self.PAD, pady=self.PAD) 
-        pass
-    def _make_textbox(self):
-        self.text1 = tk.Text(self,  height=1, width=10,bg='black') 
-        self.text1.pack(padx=self.PAD, pady=self.PAD) 
-
+    # def _make_label(self,column):
+    #     self.lbl1 = tk.Label(self, text=column,font=('Helvetica', 11), width=10)  
+    #     self.lbl1.pack(side = "left")
+    # def _make_textboxT(self):
+    #     self.textbox= tk.Text(self,  height=1, width=10,bg='black') 
+    #     self.textbox.pack(side = "left")
     
+    def _make_field_Temp(self):
+        self.lblTemp = tk.Label(self, text="Temperature",font=('Helvetica', 11), width=10)  
+        self.lblTemp.pack(side = "left")
+        self.tbTemp= tk.Text(self,  height=1, width=10,bg='black') 
+        self.tbTemp.pack(side = "left")
+         
     """
         Creates view's frame.
     """ 
@@ -64,7 +79,6 @@ class ShowView(tk.Tk, View):
         title = ttk.Label(self.mainFrame, text="Datenbank Name", font=("Helvetica", 20))
         title.pack(padx=self.PAD, pady=self.PAD)
     
-
     """
         Displays view's context menu.
         # todo: geht noch nicht
@@ -91,8 +105,6 @@ class ShowView(tk.Tk, View):
             self.contextMenu.selection = self.treeview.set(rowSelected)
             self.contextMenu.post(event.x_root, event.y_root)
     
-    
-
     """
         Creates view's options.
     """
@@ -105,13 +117,20 @@ class ShowView(tk.Tk, View):
                 btn = ttk.Button(frame_btn, text=caption, command=self.destroy)
             else:
                 btn = ttk.Button(frame_btn, text=caption, command=lambda txt=caption: self.showController.btnClicked(txt))
-            
-            btn.pack(fill="x")
+            btn.pack(side = "bottom")
     
     def _get_item(self):
+   
         selected_item = self.treeview.focus()
         self.item = self.treeview.item(selected_item)
-
+        
+        ####Set Temperature to Textbox
+        self.tbTemp.delete("1.0",tk.END)
+        self.TEMPERATURE = getTemperature(self.item)
+        self.tbTemp.insert(tk.END, self.TEMPERATURE)
+    
+    def _update_data(self):
+        return self.TEMPERATURE
 
     """
         Displays data on screen.
