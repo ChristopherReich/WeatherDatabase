@@ -122,8 +122,6 @@ class Database:
     
     def findData(self, collection_name, query):
         collection_name = self.db[collection_name]
-
-        
         results = collection_name.find(query)
         return results
 
@@ -132,6 +130,9 @@ class Database:
         results = collection_name.find()
         return results
     
+    def Update(self):
+        print("Update Database")
+        pass
     
     
     # def getDataInJSON(self, collection_name):

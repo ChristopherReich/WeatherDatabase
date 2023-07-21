@@ -21,9 +21,8 @@ class ShowController(Controller):
             self.showView._get_item()
         elif caption == "Update Data":
             self.showView._update_data()
+            self.updateData()
        
-        
-    
     #-----------------------------------------------------------------------
     #        Methods
     #-----------------------------------------------------------------------
@@ -33,6 +32,9 @@ class ShowController(Controller):
     def getData(self):
         data = self.database.getAll('WeatherCollection')
         return data
+    def updateData(self):
+        self.database.Update()
+        
     
     """
         Opens EditController

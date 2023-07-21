@@ -120,8 +120,8 @@ class ShowView(tk.Tk, View):
             btn.pack(side = "bottom")
     
     def _get_item(self):
-   
         selected_item = self.treeview.focus()
+        print(selected_item)
         self.item = self.treeview.item(selected_item)
         
         ####Set Temperature to Textbox
@@ -130,7 +130,7 @@ class ShowView(tk.Tk, View):
         self.tbTemp.insert(tk.END, self.TEMPERATURE)
     
     def _update_data(self):
-        return self.TEMPERATURE
+        return [self.TEMPERATURE,1]
 
     """
         Displays data on screen.
