@@ -17,11 +17,12 @@ class ShowController(Controller):
         self.core = Core()
         
     def btnClicked(self, caption):
-        if caption == "Get Selection":
-            self.showView._get_item()
-        elif caption == "Update Data":
-            self.showView._update_data()
-            self.updateData()
+        if caption == "Update Data":
+            pass
+            #self.showView._update_data()          
+            #self.updateData()
+
+
        
     #-----------------------------------------------------------------------
     #        Methods
@@ -32,9 +33,22 @@ class ShowController(Controller):
     def getData(self):
         data = self.database.getAll('WeatherCollection')
         return data
+    
     def updateData(self):
-        self.database.Update()
-        
+        self.database.update()
+
+    def item_selected(self, event):
+        # This method is bound with the <<TreeviewSelect>> event of the Treeview list.
+        # This will call 'get_movie_detail' method of the DBHandler class to fetch the details
+        # of selected movie.
+        for selected_item in self.showView.treeview.selection():
+                # Get the selected item
+                item = self.showView.treeview.item(selected_item)
+                # Get the document from the Mongo db collection matching with the name of the movie
+                id = item['values'][5]               
+                result = self.database.get_item_by_id('WeatherCollection', id)
+                self.showView._display_selected_item(result)
+           
     
     """
         Opens EditController

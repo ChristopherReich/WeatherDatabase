@@ -4,6 +4,7 @@ import numpy as np
 from model import OpenWeather
 import json
 from bson import json_util
+from bson.objectid import ObjectId
 
 
 import pandas as pd
@@ -64,6 +65,7 @@ class Database:
                 }
             )
             print('Collection created...')
+        self.collection = self.db[collection_name]
 
 
 
@@ -130,10 +132,15 @@ class Database:
         results = collection_name.find()
         return results
     
-    def Update(self):
+    def update(self):
         print("Update Database")
         pass
     
+    def get_item_by_id(self, collection_name, id):
+        collection_name = self.db[collection_name]
+        objInstance = ObjectId(id)
+        result = collection_name.find_one({'_id': objInstance})
+        return result
     
     # def getDataInJSON(self, collection_name):
     #     collection_name = self.db[collection_name]

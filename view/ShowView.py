@@ -22,10 +22,9 @@ class ShowView(tk.Tk, View):
     TEMPERATURE = ""
     
     BTN_CAPTION = [
-        "Get Selection",
         "Update Data"
     ]
-    
+
     
     #-----------------------------------------------------------------------
     #        Constructor
@@ -43,6 +42,10 @@ class ShowView(tk.Tk, View):
         self._show_data()
         self._make_options()
         self._make_field_Temp()
+
+        # Bind the method with TreeViewSelect event.
+        self.treeview.bind('<<TreeviewSelect>>', controller.item_selected)
+        
         
         # for column in self.treeview["columns"]:
         #     self._make_label(column)
@@ -62,7 +65,7 @@ class ShowView(tk.Tk, View):
     def _make_field_Temp(self):
         self.lblTemp = tk.Label(self, text="Temperature",font=('Helvetica', 11), width=10)  
         self.lblTemp.pack(side = "left")
-        self.tbTemp= tk.Text(self,  height=1, width=10,bg='black') 
+        self.tbTemp= tk.Text(self,  height=1, width=3,bg='white') 
         self.tbTemp.pack(side = "left")
          
     """
@@ -119,15 +122,13 @@ class ShowView(tk.Tk, View):
                 btn = ttk.Button(frame_btn, text=caption, command=lambda txt=caption: self.showController.btnClicked(txt))
             btn.pack(side = "bottom")
     
-    def _get_item(self):
-        selected_item = self.treeview.focus()
-        print(selected_item)
-        self.item = self.treeview.item(selected_item)
-        
+    """
+        Display the selected item in the treeview
+    """
+    def _display_selected_item(self, item):        
         ####Set Temperature to Textbox
         self.tbTemp.delete("1.0",tk.END)
-        self.TEMPERATURE = getTemperature(self.item)
-        self.tbTemp.insert(tk.END, self.TEMPERATURE)
+        self.tbTemp.insert(tk.END, item['temperature'])
     
     def _update_data(self):
         return [self.TEMPERATURE,1]
@@ -158,7 +159,7 @@ class ShowView(tk.Tk, View):
             self.treeview.heading(column, text=column)
             self.treeview.column(column, width=100, anchor=tk.CENTER)
 
-        # Insert data into the Treeview
+        # Insert data into the Treeview in the correct order
         for row in data:
             val=[]
             for col in self.treeview['columns']:
@@ -171,6 +172,8 @@ class ShowView(tk.Tk, View):
         self.treeview.grid(sticky=(tk.N, tk.S, tk.W, tk.E))
         self.treeview.grid_rowconfigure(0, weight=1)
         self.treeview.grid_columnconfigure(0, weight=1)
+
+        
                
         
 
@@ -180,6 +183,9 @@ class ShowView(tk.Tk, View):
         
         #btn = ttk.Button(self.frame_customers, text="Update data", command=self.update)
         #btn.pack()
+
+
+    
 
 
     """
