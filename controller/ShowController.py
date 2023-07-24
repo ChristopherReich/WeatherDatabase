@@ -2,6 +2,7 @@ from core.Core import Core
 from model import MongoDb
 from core.Controller import Controller
 from tkinter import messagebox
+import copy
 
 
 """
@@ -18,9 +19,13 @@ class ShowController(Controller):
         
     def btnClicked(self, caption):
         if caption == "Update Data":
-            pass
-            #self.showView._update_data()          
-            #self.updateData()
+            if self.selected_item != None:     
+                new_item = copy.deepcopy(self.selected_item)       
+                new_temperature = self.showView._get_updated_temperature()
+
+                new_item['temperature'] = new_temperature
+                self.database.replace_item('WeatherCollection', self.selected_item, new_item)
+            self.showView._show_data()
 
 
        
@@ -33,9 +38,6 @@ class ShowController(Controller):
     def getData(self):
         data = self.database.getAll('WeatherCollection')
         return data
-    
-    def updateData(self):
-        self.database.update()
 
     def item_selected(self, event):
         # This method is bound with the <<TreeviewSelect>> event of the Treeview list.
@@ -45,9 +47,9 @@ class ShowController(Controller):
                 # Get the selected item
                 item = self.showView.treeview.item(selected_item)
                 # Get the document from the Mongo db collection matching with the name of the movie
-                id = item['values'][5]               
-                result = self.database.get_item_by_id('WeatherCollection', id)
-                self.showView._display_selected_item(result)
+                self.selected_id = item['values'][5]               
+                self.selected_item = self.database.get_item_by_id('WeatherCollection', self.selected_id)
+                self.showView._display_selected_item(self.selected_item)
            
     
     """

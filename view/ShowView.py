@@ -55,13 +55,7 @@ class ShowView(tk.Tk, View):
     #-----------------------------------------------------------------------
     #        Methods
     #-----------------------------------------------------------------------
-    # def _make_label(self,column):
-    #     self.lbl1 = tk.Label(self, text=column,font=('Helvetica', 11), width=10)  
-    #     self.lbl1.pack(side = "left")
-    # def _make_textboxT(self):
-    #     self.textbox= tk.Text(self,  height=1, width=10,bg='black') 
-    #     self.textbox.pack(side = "left")
-    
+  
     def _make_field_Temp(self):
         self.lblTemp = tk.Label(self, text="Temperature",font=('Helvetica', 11), width=10)  
         self.lblTemp.pack(side = "left")
@@ -92,7 +86,6 @@ class ShowView(tk.Tk, View):
         self.contextMenu.add_command(label="Delete", command=self.showTreeViewController.btnDel)
         
         # Take data from the row that was clicked
-        # Ex: tv.item(data) => {'text': 1, 'image': '', 'values': ['name', 'lastname', 3213, '321.00'], 'open': 0, 'tags': ''}
         rowSelected = self.treeview.identify_row(event.y)
 
         # Check if some data was taken
@@ -126,12 +119,12 @@ class ShowView(tk.Tk, View):
         Display the selected item in the treeview
     """
     def _display_selected_item(self, item):        
-        ####Set Temperature to Textbox
         self.tbTemp.delete("1.0",tk.END)
         self.tbTemp.insert(tk.END, item['temperature'])
     
-    def _update_data(self):
-        return [self.TEMPERATURE,1]
+    def _get_updated_temperature(self):
+        temp = self.tbTemp.get("1.0",'end-1c') # remove last character
+        return temp
 
     """
         Displays data on screen.

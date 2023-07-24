@@ -132,10 +132,11 @@ class Database:
         results = collection_name.find()
         return results
     
-    def update(self):
-        print("Update Database")
-        pass
+    def replace_item(self, collection_name, old_item, new_item):
+        collection_name = self.db[collection_name]
+        collection_name.replace_one(old_item, new_item)
     
+
     def get_item_by_id(self, collection_name, id):
         collection_name = self.db[collection_name]
         objInstance = ObjectId(id)
