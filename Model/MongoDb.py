@@ -2,8 +2,6 @@ from pymongo import MongoClient
 from datetime import datetime , timedelta
 import numpy as np
 from model import OpenWeather
-import json
-from bson import json_util
 from bson.objectid import ObjectId
 
 
@@ -16,8 +14,6 @@ class Database:
         self.database_name = name
         self.Connect_Database() # working on local database, because cloud database needs static ip adress
         
-
-
     def Connect_Database(self):
         client = MongoClient('mongodb://127.0.0.1:27017')
         if self.database_name in client.list_database_names():
@@ -25,9 +21,6 @@ class Database:
         else:
             client.get_database(self.database_name)
             print('Database created...')
-
-
-
 
     def Connect_Cloud_Database(self):
         from pymongo.mongo_client import MongoClient
@@ -50,8 +43,6 @@ class Database:
             self.db = client[self.database_name]
             print('Cloud Database created...')
 
-
-
     def Create_Collection(self, collection_name):
         if collection_name in self.db.list_collection_names():
             pass
@@ -67,16 +58,11 @@ class Database:
             print('Collection created...')
         self.collection = self.db[collection_name]
 
-
-
-
     def Insert_OpenWeather_Data(self, location, collection_name):
         data = location.GetWeatherData()
         collection_name = self.db[collection_name]
         collection_name.insert_one(data)
         print('Insert 1 dataset...')
-
-
 
     def Insert_Sample_Data(self, location, collection_name):
         data = {
@@ -96,19 +82,21 @@ class Database:
         collection_name.insert_one(data)
         print('Insert 1 sample dataset...')
 
-
-
     def Create_Sample_Dataset(self, location, collection_name):
         dataList = []
         for i in range(24*4,0,-1):
             timeOffset = timedelta(minutes = i*15)
 
+            # data = {
+            #     'location': {
+            #         'city': location.city,
+            #         'street' : location.street,
+            #         'street number' : location.street_number
+            #     },
             data = {
-                'location': {
-                    'city': location.city,
-                    'street' : location.street,
-                    'street number' : location.street_number
-                },
+                'city': location.city,
+                'street' : location.street,
+                'street number' : location.street_number,
                 'timestamp': datetime.now() - timeOffset,
                 'temperature': np.random.randint(0, 30),
                 'humidity' : np.random.randint(0,100),
@@ -121,7 +109,14 @@ class Database:
         collection_name.insert_many(dataList)
         print('Create test dataset...')
 
-    
+    def update_Data_Field(self, collection_name,field,value):
+        
+        collection_name = self.db[collection_name]
+        objInstance = ObjectId(id)
+        object_criteria = {'_id': objInstance}
+        update_operation = {"$set": {f"{field}": value}}
+        collection_name.find_one_and_update(object_criteria,update_operation)
+
     def findData(self, collection_name, query):
         collection_name = self.db[collection_name]
         results = collection_name.find(query)
@@ -136,50 +131,19 @@ class Database:
         collection_name = self.db[collection_name]
         collection_name.replace_one(old_item, new_item)
     
-
     def get_item_by_id(self, collection_name, id):
         collection_name = self.db[collection_name]
         objInstance = ObjectId(id)
         result = collection_name.find_one({'_id': objInstance})
-        return result
+        print (result)
+        print (result)
+        print (result)
+        print (result)
+        print (result)
+ 
     
-    # def getDataInJSON(self, collection_name):
-    #     collection_name = self.db[collection_name]
-    #     results = collection_name.find()
-    #     list_cur = list(results)
-    #     json_data=json.loads(json_util.dumps(list_cur))
-        
-    #     data =json_data
-            
-    #     temperatures = [entry['temperature'] for entry in data]
-    #     timestamps = [entry['timestamp']['$date'] for entry in data]
-    #     ts =[datetime.fromtimestamp(time/ 1000.0) for time in timestamps]
-    #     tsl =[datetime.timestamp(time) for time in ts]
-    #     dates = pd.to_datetime(tsl, unit='s')
-
-    #     fig = go.Figure()
-    #     fig.add_trace(go.Scatter(x=dates, y=temperatures, name='Temperatur (°C)'))
-        
-    #     fig.update_layout(
-    #         title='Temperaturverlauf',
-    #         xaxis_title='Zeit',
-    #         yaxis_title='Temperatur (°C)',
-    #         xaxis=dict(
-    #             rangeselector=dict(
-    #                 buttons=list([
-    #                     dict(count=1, label='1 Tag', step='day', stepmode='backward'),
-    #                     dict(count=3, label='3 Tage', step='day', stepmode='backward'),
-    #                     dict(count=7, label='1 Woche', step='day', stepmode='backward'),
-    #                     dict(step='all')
-    #                 ])
-    #             ),
-    #             rangeslider=dict(visible=True),
-    #             type='date'
-    #         ),
-    #         template= 'seaborn'  # Style "seaborn-whitegrid" verwenden
-    #     )
-        
-    #     fig.show()   
-    #     return json_data
-
-
+    def delete_item_by_id(self, collection_name, id):
+        collection_name = self.db[collection_name]
+        objectID=ObjectId(f"{id}")
+        result = collection_name.delete_many({'location._id': objectID })
+        #print(result.deleted_count, "Datenpunkt wurde gelöscht.")
