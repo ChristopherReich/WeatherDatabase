@@ -15,7 +15,7 @@ class ShowController(Controller):
     #-----------------------------------------------------------------------
     def __init__(self):
         self.database = MongoDb.Database('WeatherDatabase')
-        self.database.set_Collection('WeatherCollection')
+        #self.database.set_Collection('WeatherCollection')
         self.showView = self.loadView("show")
         self.core = Core()
 

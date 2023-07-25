@@ -13,6 +13,7 @@ class Database:
     def __init__(self, name):
         self.database_name = name
         self.Connect_Database() # working on local database, because cloud database needs static ip adress
+        self.Create_Collection('WeatherCollection')
         
     def Connect_Database(self):
         client = MongoClient('mongodb://127.0.0.1:27017')
@@ -58,13 +59,12 @@ class Database:
             print('Collection created...')
         self.collection = self.db[collection_name]
 
-    def Insert_OpenWeather_Data(self, location, collection_name):
+    def Insert_OpenWeather_Data(self, location):
         data = location.GetWeatherData()
-        collection_name = self.db[collection_name]
-        collection_name.insert_one(data)
+        self.collection.insert_one(data)
         print('Insert 1 dataset...')
 
-    def Insert_Sample_Data(self, location, collection_name):
+    def Insert_Sample_Data(self, location):
         data = {
             'location': {
                 'city': location.city,
@@ -78,11 +78,10 @@ class Database:
             'pressure' : np.random.randint(1000, 1050)           
         }
 
-        collection_name = self.db[collection_name]
-        collection_name.insert_one(data)
+        self.collection.insert_one(data)
         print('Insert 1 sample dataset...')
 
-    def Create_Sample_Dataset(self, location, collection_name):
+    def Create_Sample_Dataset(self, location):
         dataList = []
         for i in range(24*4,0,-1):
             timeOffset = timedelta(minutes = i*15)
@@ -102,28 +101,22 @@ class Database:
             }
             dataList.append(data)
 
-        collection_name = self.db[collection_name]
-        collection_name.insert_many(dataList)
+        self.collection.insert_many(dataList)
         print('Create test dataset...')
 
-    def findData(self, collection_name, query):
-        collection_name = self.db[collection_name]
-        results = collection_name.find(query)
+    def findData(self, query):
+        results = self.collection.find(query)
         return results
 
-    def getAll(self, collection_name):
-        collection_name = self.db[collection_name]
-        results = collection_name.find()
+    def getAll(self):
+        results = self.collection.find()
         return results
       
-    def update_item_by_id(self, collection_name, view_dict):
+    def update_item_by_id(self, view_dict):
         temperature = view_dict["temperature"]
         id = view_dict["ID"]
-        #temperature = 0
-        collection_name = self.db[collection_name]
-        collection_name.update({'metadata.ID': id } , {"$set": { 'metadata.temperature': temperature}},multi=True)
+        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.temperature': temperature}},multi=True)
         
-    def delete_item_by_id(self, collection_name, view_dict):
-        collection_name = self.db[collection_name]
+    def delete_item_by_id(self, view_dict):
         id = view_dict["id"]
-        collection_name.delete_many({'metadata.ID': id })
+        self.collection.delete_many({'metadata.ID': id })

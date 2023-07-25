@@ -27,7 +27,7 @@ class GraphController(Controller):
         @return All customers in database
     """
     def getData(self):
-        data = self.database.getAll(self.collectionName)
+        data = self.database.getAll()
         return data
     
     def closeAllWindows(self):
@@ -37,7 +37,7 @@ class GraphController(Controller):
         @behaviour when a button is clicked
     """
     def btnClicked(self, caption):
-        data = self.database.getAll(self.collectionName)
+        data = self.database.getAll()
         timestamps = []
         temperatures = []
         humidity = []
