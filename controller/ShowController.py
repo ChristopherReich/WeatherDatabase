@@ -28,8 +28,7 @@ class ShowController(Controller):
             self.database.delete_item_by_id(view_dict= data)
             self.showView._show_data()
         if caption == "Data Export":
-            self.database.export_To_CSV()
-            self.showView._show_data()
+            self.database.export_To_CSV(self.showView._save_path_dir())
 
        
     #-----------------------------------------------------------------------

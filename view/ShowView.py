@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from view.View import View
 from datetime import datetime
-import re
+from tkinter import filedialog
 
 
 """
@@ -22,7 +22,9 @@ class ShowView(tk.Tk, View):
     
     BTN_CAPTION = [
         "Update Data",
-        "Delete"
+        "Delete",
+        "Data Export"
+        
     ]
 
     
@@ -80,6 +82,15 @@ class ShowView(tk.Tk, View):
         self.lblTemp.pack(side = "left")
         self.tbTemp= tk.Text(self,  height=1, width=3,bg='white') 
         self.tbTemp.pack(side = "left")
+             
+    def _save_path_dir(self):
+        self.askFil = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
+        return self.askFil
+    
+    def _load_path_dir(self):
+        self.askFil = filedialog.askopenfilename(initialdir = "/",title = "Select file")
+        return self.askFil
+    
          
     """
         Creates view's frame.
