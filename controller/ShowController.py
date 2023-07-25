@@ -15,17 +15,20 @@ class ShowController(Controller):
     #-----------------------------------------------------------------------
     def __init__(self):
         self.database = MongoDb.Database('WeatherDatabase')
+        self.database.set_Collection('WeatherCollection')
         self.showView = self.loadView("show")
         self.core = Core()
 
         
     def btnClicked(self, caption,data):
         if caption == "Update Data":
-            self.database.update_item_by_id('WeatherCollection',view_dict= data)
-            #self.database.update_Data_Field('WeatherCollection','temperature',99,ObjectID)
+            self.database.update_item_by_id(view_dict = data)
             self.showView._show_data()
         if caption == "Delete":
-            self.database.delete_item_by_id('WeatherCollection',view_dict= data)
+            self.database.delete_item_by_id(view_dict= data)
+            self.showView._show_data()
+        if caption == "Data Export":
+            self.database.export_To_CSV()
             self.showView._show_data()
 
        
@@ -36,7 +39,7 @@ class ShowController(Controller):
         @return All customers in database
     """
     def getData(self):
-        data = self.database.getAll('WeatherCollection')
+        data = self.database.getAll()
         return data
 
     def item_selected(self,selected_item):
