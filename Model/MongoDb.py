@@ -3,10 +3,9 @@ from datetime import datetime , timedelta
 import numpy as np
 from model import OpenWeather
 from bson.objectid import ObjectId
+import csv
 
 
-import pandas as pd
-import plotly.graph_objects as go
 
 class Database:
 
@@ -120,3 +119,23 @@ class Database:
     def delete_item_by_id(self, view_dict):
         id = view_dict["id"]
         self.collection.delete_many({'metadata.ID': id })
+        
+    def export_To_CSV(self,path):
+        data = self.getAll()
+        csv_file= path
+        with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
+            fieldnames = list(data[0].keys())
+            fields=[]
+            for field in fieldnames:
+                #fields.append('metadata.'+field)
+                fields.append(field)
+            fields.append('_id')
+            fields.append('timestamp')
+            writer = csv.DictWriter(file,fieldnames= fieldnames)
+
+            # Schreibe die Feldnamen als erste Zeile in die CSV-Datei
+            writer.writeheader()
+
+            # Schreibe die Daten aus der MongoDB in die CSV-Datei
+            for document in data:
+                writer.writerow(document)
