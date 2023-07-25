@@ -42,18 +42,7 @@ class ShowController(Controller):
         return data
 
     def item_selected(self,selected_item):
-        #self.database.update_item_by_id('WeatherCollection', selected_item)
         pass
-        # This method is bound with the <<TreeviewSelect>> event of the Treeview list.
-        # This will call 'get_movie_detail' method of the DBHandler class to fetch the details
-        # of selected movie.
-        # for selected_item in self.showView.treeview.selection():
-        #         # Get the selected item
-        #         item = self.showView.treeview.item(selected_item)
-        #         # Get the document from the Mongo db collection matching with the name of the movie
-        #         self.selected_id = item['values'][5]               
-        #         self.selected_item = self.database.update_item_by_id('WeatherCollection', self.selected_id)
-        #         self.showView._display_selected_item(self.selected_item)
            
     
     """
@@ -62,9 +51,6 @@ class ShowController(Controller):
         @param id_customer Customer id that will be edited
     """
     def btnEdit(self, id_customer):
-        #customer = self.database.get(id_customer)
-        #c = self.core.openController("edit")
-        #c.main(customer, self.showView)
         messagebox.showinfo("Edit data")
     
     """

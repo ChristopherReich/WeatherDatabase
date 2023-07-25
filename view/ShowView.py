@@ -23,6 +23,7 @@ class ShowView(tk.Tk, View):
     BTN_CAPTION = [
         "Update Data",
         "Delete",
+        "Insert",
         "Data Export"
         
     ]
@@ -76,13 +77,52 @@ class ShowView(tk.Tk, View):
                 return count
             count = count + 1
      
-  
     def _make_field_Temp(self):
+        color = "black"
+        side = "left"
         self.lblTemp = tk.Label(self, text="Temperature",font=('Helvetica', 11), width=10)  
-        self.lblTemp.pack(side = "left")
-        self.tbTemp= tk.Text(self,  height=1, width=3,bg='white') 
-        self.tbTemp.pack(side = "left")
+        self.lblTemp.pack(side = side)
+        self.tbTemp= tk.Text(self,  height=1, width=4,bg=color) 
+        self.tbTemp.pack(side = side)
+        
+        self.lblHum = tk.Label(self, text="Humidity",font=('Helvetica', 11), width=10)  
+        self.lblHum .pack(side = side)
+        self.tbHum = tk.Text(self,  height=1, width=4,bg=color) 
+        self.tbHum .pack(side = side)
+        
+        self.lblCit = tk.Label(self, text="City",font=('Helvetica', 11), width=10)  
+        self.lblCit .pack(side = side)
+        self.tbCit = tk.Text(self,  height=1, width=10,bg=color) 
+        self.tbCit .pack(side = side)
+        
+        self.lblID = tk.Label(self, text="ID",font=('Helvetica', 11), width=10)  
+        self.lblID .pack(side = side)
+        self.tbID = tk.Text(self,  height=1, width=4,bg=color) 
+        self.tbID .pack(side = side)
+        
+        self.lblpre = tk.Label(self, text="pressure",font=('Helvetica', 11), width=10)  
+        self.lblpre .pack(side = side)
+        self.tbpre = tk.Text(self,  height=1, width=4,bg=color) 
+        self.tbpre .pack(side = side)
+        
+        self.lblstr = tk.Label(self, text="Street",font=('Helvetica', 11), width=10)  
+        self.lblstr .pack(side = side)
+        self.tbstr = tk.Text(self,  height=1, width=10,bg=color) 
+        self.tbstr .pack(side = side)
+        
+        self.lblNo = tk.Label(self, text="Number",font=('Helvetica', 11), width=10)  
+        self.lblNo .pack(side = side)
+        self.tbNo = tk.Text(self,  height=1, width=4,bg=color) 
+        self.tbNo .pack(side = side)
+        
+        self.lblTi = tk.Label(self, text="Time",font=('Helvetica', 11), width=10)  
+        self.lblTi .pack(side = side)
+        self.tbTi = tk.Text(self,  height=1, width=15,bg=color) 
+        self.tbTi .pack(side = side)
              
+    """
+        Open path
+    """ 
     def _save_path_dir(self):
         self.askFil = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
         return self.askFil
@@ -90,7 +130,6 @@ class ShowView(tk.Tk, View):
     def _load_path_dir(self):
         self.askFil = filedialog.askopenfilename(initialdir = "/",title = "Select file")
         return self.askFil
-    
          
     """
         Creates view's frame.
@@ -148,7 +187,16 @@ class ShowView(tk.Tk, View):
     def create_dict(self):
             data = {
                 'ID': self.OBJECT_ID,
-                'temperature': self._get_updated_temperature()
+                'temperature': self._get_updated_temperature(),
+                'humidity': self.tbHum.get("1.0",'end-1c'),
+                'city': self.tbCit.get("1.0",'end-1c'),
+                'street': self.tbstr.get("1.0",'end-1c'),
+                'street number': self.tbNo.get("1.0",'end-1c'),
+                'id': self.tbID.get("1.0",'end-1c'),
+                'Time': self.tbTi.get("1.0",'end-1c'),
+                'pressure': self.tbpre.get("1.0",'end-1c'),
+                'id': self.tbID.get("1.0",'end-1c'),
+
                 }
             return data
     
