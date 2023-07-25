@@ -44,10 +44,10 @@ class GraphController(Controller):
         windSpeed = []
 
         for result in data:
-            timestamps.append(result['timestamp'])
-            temperatures.append(result['temperature'])
-            humidity.append(result['humidity'])
-            windSpeed.append(result['windSpeed'])
+            timestamps.append(result['metadata']['time'])
+            temperatures.append(result['metadata']['temperature'])
+            humidity.append(result['metadata']['humidity'])
+            windSpeed.append(result['metadata']['windSpeed'])
 
         plt.clf()
 

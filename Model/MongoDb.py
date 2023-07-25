@@ -51,7 +51,7 @@ class Database:
                 collection_name,
                 timeseries= {
                     'timeField': 'timestamp',
-                    'metaField': 'location',
+                    'metaField': 'metadata',
                     'granularity': 'seconds'
                 }
             )
@@ -86,36 +86,25 @@ class Database:
         dataList = []
         for i in range(24*4,0,-1):
             timeOffset = timedelta(minutes = i*15)
-
-            # data = {
-            #     'location': {
-            #         'city': location.city,
-            #         'street' : location.street,
-            #         'street number' : location.street_number
-            #     },
+            
             data = {
-                'city': location.city,
-                'street' : location.street,
-                'street number' : location.street_number,
-                'timestamp': datetime.now() - timeOffset,
-                'temperature': np.random.randint(0, 30),
-                'humidity' : np.random.randint(0,100),
-                'windSpeed' : np.random.randint(0,50),
-                'pressure' : np.random.randint(1000, 1050)           
+                'metadata': {   'ID': i,
+                                'temperature': np.random.randint(0, 30),
+                                'humidity' : np.random.randint(0,100),
+                                'windSpeed' : np.random.randint(0,50),
+                                'pressure' : np.random.randint(1000, 1050),
+                                'city': location.city,
+                                'street' : location.street,
+                                'street number' : location.street_number,
+                                'time': datetime.now() - timeOffset
+                                }, 
+                'timestamp': datetime.now() - timeOffset
             }
             dataList.append(data)
 
         collection_name = self.db[collection_name]
         collection_name.insert_many(dataList)
         print('Create test dataset...')
-
-    def update_Data_Field(self, collection_name,field,value):
-        
-        collection_name = self.db[collection_name]
-        objInstance = ObjectId(id)
-        object_criteria = {'_id': objInstance}
-        update_operation = {"$set": {f"{field}": value}}
-        collection_name.find_one_and_update(object_criteria,update_operation)
 
     def findData(self, collection_name, query):
         collection_name = self.db[collection_name]
@@ -126,24 +115,15 @@ class Database:
         collection_name = self.db[collection_name]
         results = collection_name.find()
         return results
-    
-    def replace_item(self, collection_name, old_item, new_item):
+      
+    def update_item_by_id(self, collection_name, view_dict):
+        temperature = view_dict["temperature"]
+        id = view_dict["ID"]
+        #temperature = 0
         collection_name = self.db[collection_name]
-        collection_name.replace_one(old_item, new_item)
-    
-    def get_item_by_id(self, collection_name, id):
+        collection_name.update({'metadata.ID': id } , {"$set": { 'metadata.temperature': temperature}},multi=True)
+        
+    def delete_item_by_id(self, collection_name, view_dict):
         collection_name = self.db[collection_name]
-        objInstance = ObjectId(id)
-        result = collection_name.find_one({'_id': objInstance})
-        print (result)
-        print (result)
-        print (result)
-        print (result)
-        print (result)
- 
-    
-    def delete_item_by_id(self, collection_name, id):
-        collection_name = self.db[collection_name]
-        objectID=ObjectId(f"{id}")
-        result = collection_name.delete_many({'location._id': objectID })
-        #print(result.deleted_count, "Datenpunkt wurde gelöscht.")
+        id = view_dict["id"]
+        collection_name.delete_many({'metadata.ID': id })

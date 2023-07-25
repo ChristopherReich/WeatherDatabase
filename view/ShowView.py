@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from view.View import View
 from datetime import datetime
+import re
 
 
 """
@@ -9,9 +10,6 @@ from datetime import datetime
 """
 
 
-def getTemperature(s):
-    split_data = str(s).split(',')
-    return split_data[7]
 
 class ShowView(tk.Tk, View):
     #-----------------------------------------------------------------------
@@ -20,9 +18,11 @@ class ShowView(tk.Tk, View):
     PAD = 12
     COLUMN_WIDTH = 200
     TEMPERATURE = ""
+    OBJECT_ID = ""
     
     BTN_CAPTION = [
-        "Update Data"
+        "Update Data",
+        "Delete"
     ]
 
     
@@ -44,17 +44,36 @@ class ShowView(tk.Tk, View):
         self._make_field_Temp()
 
         # Bind the method with TreeViewSelect event.
-        self.treeview.bind('<<TreeviewSelect>>', controller.item_selected)
-        
-        
-        # for column in self.treeview["columns"]:
-        #     self._make_label(column)
-        #     self._make_textbox()
-
+        self.treeview.bind('<<TreeviewSelect>>', self._on_treeview_select)
 
     #-----------------------------------------------------------------------
     #        Methods
     #-----------------------------------------------------------------------
+    def _on_treeview_select(self,event):
+        item_id = self.treeview.focus()
+        data = self.treeview.item(item_id)
+        self.showController.item_selected(self.getObjectID(data))
+        self._display_selected_item(data)
+        self.OBJECT_ID = self.getObjectID(data)
+
+    def getObjectID(self,s):
+        s = s["values"]
+        result = str(s).split(',')[self.find_heading("ID")].replace("[","").replace("]","")
+        return int(result)
+    
+    def getTemperature(self,s):
+        s = s["values"]
+        result = str(s).split(',')[self.find_heading("temperature")].replace("[","").replace("]","")
+        return int(result)
+      
+    def find_heading(self,s):
+        headings = self.treeview["columns"]
+        count = 0
+        for heading in headings:
+            if heading == s:
+                return count
+            count = count + 1
+     
   
     def _make_field_Temp(self):
         self.lblTemp = tk.Label(self, text="Temperature",font=('Helvetica', 11), width=10)  
@@ -112,25 +131,37 @@ class ShowView(tk.Tk, View):
             if caption == "Exit":
                 btn = ttk.Button(frame_btn, text=caption, command=self.destroy)
             else:
-                btn = ttk.Button(frame_btn, text=caption, command=lambda txt=caption: self.showController.btnClicked(txt))
-            btn.pack(side = "bottom")
+                btn = ttk.Button(frame_btn, text=caption, command=lambda txt=caption: self.showController.btnClicked(txt,self.create_dict()))
+            btn.pack(side = "left")
+    
+    def create_dict(self):
+            data = {
+                'ID': self.OBJECT_ID,
+                'temperature': self._get_updated_temperature()
+                }
+            return data
     
     """
         Display the selected item in the treeview
     """
     def _display_selected_item(self, item):        
         self.tbTemp.delete("1.0",tk.END)
-        self.tbTemp.insert(tk.END, item['temperature'])
+        self.tbTemp.insert(tk.END, self.getTemperature(item))
+        self.TEMPERATURE = self.getTemperature(item)
     
     def _get_updated_temperature(self):
         temp = self.tbTemp.get("1.0",'end-1c') # remove last character
+        print(temp)
         return temp
+
+
+    def _refresh_treeview(self):
+        self.treeview.delete(self.treeview.get_children())
 
     """
         Displays data on screen.
     """
     def _show_data(self):
-
         data = self.showController.getData()
         self.frame_data = tk.Frame(self.mainFrame)
         self.frame_data.pack(fill="x")
@@ -142,11 +173,9 @@ class ShowView(tk.Tk, View):
         lbl = ttk.Label(frame_dataView, text='Hier kommt noch der Collection name rein')
         lbl.grid(row=0, column=0, padx=self.PAD, pady=self.PAD)
 
-
         # Create a Treeview widget
         self.treeview = ttk.Treeview(frame_dataView)
-        self.treeview["columns"] = (tuple(data[0].keys()))
-
+        self.treeview["columns"] = (tuple(data[0]["metadata"].keys()))
         # Define columns
         for column in self.treeview["columns"]:
             self.treeview.heading(column, text=column)
@@ -156,7 +185,7 @@ class ShowView(tk.Tk, View):
         for row in data:
             val=[]
             for col in self.treeview['columns']:
-                val.append(row[col])
+                val.append(row["metadata"][col])
 
             self.treeview.insert('', tk.END, values=val)
 
@@ -165,10 +194,11 @@ class ShowView(tk.Tk, View):
         self.treeview.grid(sticky=(tk.N, tk.S, tk.W, tk.E))
         self.treeview.grid_rowconfigure(0, weight=1)
         self.treeview.grid_columnconfigure(0, weight=1)
+        
 
         
                
-        
+
 
         # Add listener for enable the context menu
         #self.treeview.bind("<Button-3>", self._contextMenu_display)
@@ -176,9 +206,6 @@ class ShowView(tk.Tk, View):
         
         #btn = ttk.Button(self.frame_customers, text="Update data", command=self.update)
         #btn.pack()
-
-
-    
 
 
     """
