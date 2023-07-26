@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from view.View import View
-from datetime import datetime
 from tkinter import filedialog
 
 
@@ -14,8 +13,6 @@ class ShowView(tk.Tk, View):
     #-----------------------------------------------------------------------
     PAD = 12
     COLUMN_WIDTH = 300
-    OBJECT_ID = ''
-
     
     BTN_CAPTION = [
         'Update Data',
@@ -52,24 +49,11 @@ class ShowView(tk.Tk, View):
         self._make_fields()
         self._show_data_in_treeview()
 
-        # Bind the method with TreeViewSelect event.
-        self.treeview.bind('<<TreeviewSelect>>', self.showController.display_selected_item)
 
     #-----------------------------------------------------------------------
     #        Methods
     #-----------------------------------------------------------------------      
-     
-    """
-        get the heading, because the treeview can be mixed up
-    """    
-    def find_heading(self,s):
-        headings = self.treeview['columns']
-        count = 0
-        for heading in headings:
-            if heading == s:
-                return count
-            count = count + 1
-            
+                 
     """
         Make the textboxes and labels
     """
@@ -180,19 +164,6 @@ class ShowView(tk.Tk, View):
         self.tbWi.insert(tk.END, item['metadata']['windSpeed'])
         self.tbpre.insert(tk.END, item['metadata']['pressure'])
         self.tbHum.insert(tk.END, item['metadata']['humidity'])
-
-
-    """
-        finds the ID of the selected treeview Item
-    """
-    def getObjectID(self,s):
-        s = s['values']
-        result = str(s).split(',')[self.find_heading('ID')].replace('[','').replace(']','')
-        return int(result)
-    
-    def _refresh_treeview(self):
-        self.treeview.delete(self.treeview.get_children())
-
 
 
     """

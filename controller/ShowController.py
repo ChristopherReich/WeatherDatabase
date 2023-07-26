@@ -17,6 +17,8 @@ class ShowController(Controller):
         self.database = MongoDb.Database('WeatherDatabase')
         self.showView = self.loadView('show')
         self.core = Core()
+        # Bind the method with TreeViewSelect event.
+        self.showView.treeview.bind('<<TreeviewSelect>>', self.display_selected_item)
 
 
     """
@@ -24,24 +26,17 @@ class ShowController(Controller):
     """   
     def btnClicked(self, caption):
         if caption == 'Update Data':
-            selected_item = self.get_selected_item()
-            data = self.showView.create_dict_from_input()
-            self.database.update_item_by_id(selected_item['metadata']['id'], data)
-            self.showView.refresh_Treeview()
+            self.update_data()
 
         if caption == 'Delete':
-            selected_item = self.get_selected_item()
-            self.database.delete_item_by_id(selected_item['metadata']['id'])
-            self.showView.refresh_Treeview()
+            self.delete_data()
 
         if caption == 'Data Export':
             self.database.export_To_CSV(self.showView._save_path_dir())
 
         if caption == 'Insert':
-            self.database.insert_OpenWeather_Data()
-            self.showView.refresh_Treeview()
+            self.insert_data()
 
-       
     #-----------------------------------------------------------------------
     #        Methods
     #-----------------------------------------------------------------------
@@ -59,9 +54,35 @@ class ShowController(Controller):
     """
     def display_selected_item(self,event):       
         #Get the selected item
-        selected_item = self.get_selected_item()
-        self.showView.display_selected_item(selected_item)
+        try:
+            selected_item = self.get_selected_item()
+            self.showView.display_selected_item(selected_item)
+        except:
+            pass
 
+    """
+        Update the selected item
+    """
+    def update_data(self):
+        selected_item = self.get_selected_item()
+        data = self.showView.create_dict_from_input()
+        self.database.update_item_by_id(selected_item['metadata']['id'], data)
+        self.showView.refresh_Treeview()
+
+    """
+        Delete the selected item
+    """
+    def delete_data(self):
+        selected_item = self.get_selected_item()
+        self.database.delete_item_by_id(selected_item['metadata']['id'])          
+        self.showView.refresh_Treeview()
+
+    """
+        Insert data from open cv
+    """
+    def insert_data(self):
+        self.database.insert_OpenWeather_Data()
+        self.showView.refresh_Treeview()
 
     """
         Returns the selected item
@@ -72,25 +93,8 @@ class ShowController(Controller):
         item_id = raw_item['values'][5]   # Object ID of the item            
         return self.database.get_item_by_id(item_id)
 
-    
-    """
-        Opens EditController
-        
-        @param id_customer Customer id that will be edited
-    """
-    def btnEdit(self, id_customer):
-        messagebox.showinfo('Edit data')
-    
-    """
-        Deletes the chosen customer and updates the ShowView
-        
-        @param id_customer Customer id that will be edited
-    """    
-    def btnDel(self, id_customer):
-        #self.database.delete(id_customer)
-        #self.showView.update()
-        messagebox.showinfo('Delete data', 'Data deleted with success!')
-        
+
+
     """
         @Override
     """
