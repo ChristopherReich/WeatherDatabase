@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from view.View import View
-from datetime import datetime
 import matplotlib.pyplot as plt
 
 
@@ -73,6 +72,7 @@ class GraphView(tk.Tk, View):
     @Overrite
     """
     def main(self):
+        self.protocol('WM_DELETE_WINDOW', self.closeAllWindows)
         self.mainloop()
         
     """
@@ -81,6 +81,9 @@ class GraphView(tk.Tk, View):
     def close(self):
         return
     
+    """
+        Close all figures when exiting the windows
+    """
     def closeAllWindows(self):
         self.graphController.closeAllWindows()
         self.destroy()

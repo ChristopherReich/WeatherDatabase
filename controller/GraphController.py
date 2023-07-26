@@ -14,7 +14,6 @@ class GraphController(Controller):
     #-----------------------------------------------------------------------
     def __init__(self):
         self.databaseName = 'WeatherDatabase'
-        self.collectionName = 'WeatherCollection'
         self.database = MongoDb.Database(self.databaseName)
         self.graphView = self.loadView("graph")
         self.core = Core()
