@@ -16,20 +16,23 @@ class ShowController(Controller):
     def __init__(self):
         self.database = MongoDb.Database('WeatherDatabase')
         #self.database.set_Collection('WeatherCollection')
-        self.showView = self.loadView("show")
+        self.showView = self.loadView('show')
         self.core = Core()
 
-        
+
+    """
+        @behaviour when a button is clicked
+    """   
     def btnClicked(self, caption , data):
-        if caption == "Update Data":
+        if caption == 'Update Data':
             self.database.update_item_by_id(view_dict = data)
             self.showView._show_data()
-        if caption == "Delete":
+        if caption == 'Delete':
             self.database.delete_item_by_id(view_dict= data)
             self.showView._show_data()
-        if caption == "Data Export":
+        if caption == 'Data Export':
             self.database.export_To_CSV(self.showView._save_path_dir())
-        if caption == "Insert":
+        if caption == 'Insert':
             self.database.insert_item(view_dict = data)
             self.showView._show_data()
 
@@ -55,7 +58,7 @@ class ShowController(Controller):
         @param id_customer Customer id that will be edited
     """
     def btnEdit(self, id_customer):
-        messagebox.showinfo("Edit data")
+        messagebox.showinfo('Edit data')
     
     """
         Deletes the chosen customer and updates the ShowView
@@ -65,7 +68,7 @@ class ShowController(Controller):
     def btnDel(self, id_customer):
         #self.database.delete(id_customer)
         #self.showView.update()
-        messagebox.showinfo("Delete data", "Data deleted with success!")
+        messagebox.showinfo('Delete data', 'Data deleted with success!')
         
     """
         @Override
