@@ -69,7 +69,7 @@ class GraphController(Controller):
             metadata = self.metadata[1]
             
         elif caption == 'Show ' + self.metadata[2]:
-            plt.plot(timestamps, temperatures)
+            plt.plot(timestamps, windSpeed)
             metadata = self.metadata[2]
 
         elif caption == 'Show ' + self.metadata[3]:

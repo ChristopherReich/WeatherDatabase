@@ -64,25 +64,34 @@ class ShowController(Controller):
         Update the selected item
     """
     def update_data(self):
-        selected_item = self.get_selected_item()
-        data = self.showView.create_dict_from_input()
-        self.database.update_item_by_id(selected_item['metadata']['id'], data)
-        self.showView.refresh_Treeview()
+        try:
+            selected_item = self.get_selected_item()
+            data = self.showView.create_dict_from_input()
+            self.database.update_item_by_id(selected_item['metadata']['id'], data)
+            self.showView.refresh_Treeview()
+        except:
+            print('Updating failed!')
 
     """
         Delete the selected item
     """
     def delete_data(self):
-        selected_item = self.get_selected_item()
-        self.database.delete_item_by_id(selected_item['metadata']['id'])          
-        self.showView.refresh_Treeview()
+        try:
+            selected_item = self.get_selected_item()
+            self.database.delete_item_by_id(selected_item['metadata']['id'])          
+            self.showView.refresh_Treeview()
+        except:
+            print('Deleting failed!')
 
     """
         Insert data from open cv
     """
     def insert_data(self):
-        self.database.insert_OpenWeather_Data()
-        self.showView.refresh_Treeview()
+        try:
+            self.database.insert_OpenWeather_Data()
+            self.showView.refresh_Treeview()
+        except:
+            print('Inserting failed!')
 
     """
         Returns the selected item

@@ -114,7 +114,7 @@ class ShowView(tk.Tk, View):
         Sets view's title.
     """
     def _make_title(self):
-        title = ttk.Label(self.mainFrame, text='Datenbank Name', font=('Helvetica', 20))
+        title = ttk.Label(self.mainFrame, text='Weather Database', font=('Helvetica', 20))
         title.pack(padx=self.PAD, pady=self.PAD)
     
 
@@ -139,11 +139,12 @@ class ShowView(tk.Tk, View):
         creates the dict from all inputs
     """
     def create_dict_from_input(self):
+        
             data = {
-                'temperature': self.tbTemp.get('1.0','end-1c'),
-                'humidity': self.tbHum.get('1.0','end-1c'),           
-                'windSpeed': self.tbWi.get('1.0','end-1c'),
-                'pressure': self.tbpre.get('1.0','end-1c'),
+                'temperature': float(self.tbTemp.get('1.0','end-1c')),
+                'humidity': float(self.tbHum.get('1.0','end-1c')),           
+                'windSpeed': float(self.tbWi.get('1.0','end-1c')),
+                'pressure': float(self.tbpre.get('1.0','end-1c')),
                 }
             return data
     

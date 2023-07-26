@@ -21,6 +21,7 @@ class Database:
             self.db = client[self.database_name]
         else:
             client.get_database(self.database_name)
+            self.db = client[self.database_name]
             print('Database created...')
 
     def Connect_Cloud_Database(self):
@@ -97,10 +98,10 @@ class Database:
             
             data = {
                 'metadata': {   'id' : timestamp.__hash__(),
-                                'temperature': np.random.randint(0, 30),
-                                'humidity' : np.random.randint(0,100),
-                                'windSpeed' : np.random.randint(0,50),
-                                'pressure' : np.random.randint(1000, 1050),
+                                'temperature': round(np.random.normal(20, 5),1),
+                                'humidity' : round(np.random.normal(60,10),1),
+                                'windSpeed' : round(np.random.normal(10,1),1),
+                                'pressure' : round(np.random.normal(1000, 50),1),
                                 
                                 }, 
                 'location': {
