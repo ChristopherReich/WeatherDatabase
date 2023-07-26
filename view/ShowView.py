@@ -13,20 +13,18 @@ from tkinter import filedialog
 
 class ShowView(tk.Tk, View):
     #-----------------------------------------------------------------------
-    #        Constants
+    #        Global variables
     #-----------------------------------------------------------------------
     PAD = 12
     COLUMN_WIDTH = 200
-    TEMPERATURE = ""
     OBJECT_ID = ""
-    DATA=""
+
     
     BTN_CAPTION = [
         "Update Data",
         "Delete",
         "Insert",
         "Data Export"
-        
     ]
 
     
@@ -45,7 +43,7 @@ class ShowView(tk.Tk, View):
         self._make_title()
         self._show_data()
         self._make_options()
-        self._make_field_Temp()
+        self._make_fields()
 
         # Bind the method with TreeViewSelect event.
         self.treeview.bind('<<TreeviewSelect>>', self._on_treeview_select)
@@ -59,7 +57,10 @@ class ShowView(tk.Tk, View):
         self.OBJECT_ID = self.getObjectID(data)
         self._display_selected_item(self.showController.item_selected(self.create_dict()))
         
-      
+     
+    """
+        get the heading, because the treeview can be mixed up
+    """    
     def find_heading(self,s):
         headings = self.treeview["columns"]
         count = 0
@@ -67,10 +68,14 @@ class ShowView(tk.Tk, View):
             if heading == s:
                 return count
             count = count + 1
-     
-    def _make_field_Temp(self):
+            
+    """
+        Make the textboxes and labels
+    """
+    def _make_fields(self):
         color = "black"
         side = "left"
+        
         self.lblTemp = tk.Label(self, text="Temperature",font=('Helvetica', 11), width=10)  
         self.lblTemp.pack(side = side)
         self.tbTemp= tk.Text(self,  height=1, width=4,bg=color) 
@@ -131,31 +136,7 @@ class ShowView(tk.Tk, View):
         title = ttk.Label(self.mainFrame, text="Datenbank Name", font=("Helvetica", 20))
         title.pack(padx=self.PAD, pady=self.PAD)
     
-    """
-        Displays view's context menu.
-        # todo: geht noch nicht
-    """
-    def _contextMenu_display(self, event):
-        self.contextMenu = tk.Menu(self.mainFrame, tearoff=0)
-        self.contextMenu.add_command(label="Edit", command=lambda: self.showTreeViewController.btnEdit(self.contextMenu_selectedId))
-        self.contextMenu.add_command(label="Delete", command=self.showTreeViewController.btnDel)
-        
-        # Take data from the row that was clicked
-        rowSelected = self.treeview.identify_row(event.y)
 
-        # Check if some data was taken
-        if rowSelected:
-            # Take data selected and put them in a list
-            self.contextMenu_selectedId = self.treeview.item(rowSelected)['text']
-            
-            # Let the row that was clicked as selected
-            self.treeview.focus(rowSelected)
-            self.treeview.selection_set(rowSelected)
-            
-            # Open context menu
-            self.contextMenu.selection = self.treeview.set(rowSelected)
-            self.contextMenu.post(event.x_root, event.y_root)
-    
     """
         Creates view's options.
     """
@@ -198,8 +179,6 @@ class ShowView(tk.Tk, View):
         self.tbHum.delete("1.0",tk.END)
         self.tbNo.delete("1.0",tk.END)
 
-        print(data[0]['metadata']['temperature'])
-
         self.tbTemp.insert(tk.END, data[0]['metadata']['temperature'])
         self.tbWi.insert(tk.END, data[0]['metadata']['windSpeed'])
         self.tbCit.insert(tk.END, data[0]['metadata']['city'])
@@ -208,15 +187,14 @@ class ShowView(tk.Tk, View):
         self.tbHum.insert(tk.END, data[0]['metadata']['humidity'])
         self.tbNo.insert(tk.END, data[0]['metadata']['street number'])
 
-    
+    """
+        finds the ID of the selected treeview Item
+    """
     def getObjectID(self,s):
         s = s["values"]
         result = str(s).split(',')[self.find_heading("ID")].replace("[","").replace("]","")
         return int(result)
     
-
-
-
     def _refresh_treeview(self):
         self.treeview.delete(self.treeview.get_children())
 

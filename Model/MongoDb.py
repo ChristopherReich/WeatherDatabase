@@ -80,7 +80,10 @@ class Database:
         self.collection.insert_one(data)
         print('Insert 1 sample dataset...')
 
-    def Create_Sample_Dataset(self, location):
+    def Create_Sample_Dataset(self, location):  
+        """
+        Creates Sample Dataset modified from Openweather Map
+        """
         dataList = []
         for i in range(24*4,0,-1):
             timeOffset = timedelta(minutes = i*15)
@@ -103,30 +106,68 @@ class Database:
         self.collection.insert_many(dataList)
         print('Create test dataset...')
 
-    def findData(self, query):
-        results = self.collection.find(query)
-        return results
     
     def get_One_Data_by_id(self,view_dict):
+        """ gets one single data/document from MongoDB
+
+        Args:
+            view_dict (dict): necessary information from View is only the id
+
+        Returns:
+            list: list of all items
+        """
         id = view_dict["ID"]
         cursor =  self.collection.find({'metadata.ID': id })
         return list(cursor)
-        #return dumps(list(cursor), indent = 2) 
 
     def getAll(self):
+        """ gets all data/document from MongoDB
+
+        Returns:
+            list: list of all items
+        """
         results = self.collection.find()
         return results
       
     def update_item_by_id(self, view_dict):
-        temperature = view_dict["temperature"]
+        """ updates one single data/document from MongoDB
+
+        Args:
+            view_dict (dict): necessary information from View is only the id for 
+            find the document
+
+        """
+        cit = view_dict["city"]
+        stt = view_dict["street"]
+        sNo = view_dict["street number"]
+        hum = view_dict["humidity"]
+        tem = view_dict["temperature"]
+        win = view_dict["windSpeed"]
+        pre = view_dict["pressure"]
         id = view_dict["ID"]
-        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.temperature': temperature}},multi=True)
+        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.city': cit}},multi=True)
+        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.street': stt}},multi=True)
+        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.street number': sNo}},multi=True)
+        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.humidity': hum}},multi=True)
+        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.temperature': tem}},multi=True)
+        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.windSpeed': win}},multi=True)
+        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.pressure': pre}},multi=True)
         
     def delete_item_by_id(self, view_dict):
+        """ Delete on single document/data from MongoDB
+
+        Args:
+            view_dict (dict): necessary information from View is only the id
+        """
         id = view_dict["ID"]
         self.collection.delete_many({'metadata.ID': id })
         
     def insert_item(self,view_dict):
+        """inserts a single data. ID is appended to the highest occurring ID
+
+        Args:
+            view_dict (dict): information form view
+        """
         database_data = self.getAll()
         #Find highest ID
         id_list =[]
@@ -150,21 +191,23 @@ class Database:
         print('Inserted dataset...')
         
     def export_To_CSV(self,path):
+        """ exports to CSV makes a new CSV file on the desired path
+
+        Args:
+            path (string):  from ask directory
+        """
         data = self.getAll()
         csv_file= path
         with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
             fieldnames = list(data[0].keys())
             fields=[]
             for field in fieldnames:
-                #fields.append('metadata.'+field)
                 fields.append(field)
             fields.append('_id')
             fields.append('timestamp')
+            
             writer = csv.DictWriter(file,fieldnames= fieldnames)
 
-            # Schreibe die Feldnamen als erste Zeile in die CSV-Datei
             writer.writeheader()
-
-            # Schreibe die Daten aus der MongoDB in die CSV-Datei
             for document in data:
                 writer.writerow(document)
