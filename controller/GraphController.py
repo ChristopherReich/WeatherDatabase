@@ -1,7 +1,6 @@
 from core.Core import Core
 from model import MongoDb
 from core.Controller import Controller
-from tkinter import messagebox
 import matplotlib.pyplot as plt
 
 
@@ -15,8 +14,14 @@ class GraphController(Controller):
     def __init__(self):
         self.databaseName = 'WeatherDatabase'
         self.database = MongoDb.Database(self.databaseName)
-        self.graphView = self.loadView("graph")
+        self.graphView = self.loadView('graph')
         self.core = Core()
+        self.metadata = [
+        'temperature',
+        'humidity',
+        'windspeed',
+        'pressure'
+        ]
         
     
     #-----------------------------------------------------------------------
@@ -29,6 +34,9 @@ class GraphController(Controller):
         data = self.database.getAll()
         return data
     
+    """
+        Close all figures when exiting the window
+    """
     def closeAllWindows(self):
         plt.close('all')
     
@@ -41,29 +49,39 @@ class GraphController(Controller):
         temperatures = []
         humidity = []
         windSpeed = []
+        pressure = []
 
         for result in data:
             timestamps.append(result['metadata']['time'])
             temperatures.append(result['metadata']['temperature'])
             humidity.append(result['metadata']['humidity'])
             windSpeed.append(result['metadata']['windSpeed'])
+            pressure.append(result['metadata']['pressure'])
 
         plt.clf()
 
-        if caption == "Show temperature":           
+        if caption == 'Show ' + self.metadata[0]:           
             plt.plot(timestamps, temperatures)
-            plt.ylabel('Temperature')       
-            
-        elif caption == "Show humidity":
+            metadata = self.metadata[0]
+                             
+        elif caption == 'Show ' + self.metadata[1]:
             plt.plot(timestamps, humidity)
-            plt.ylabel('humidty')
+            metadata = self.metadata[1]
             
-        elif caption == "Show windspeed":
+        elif caption == 'Show ' + self.metadata[2]:
             plt.plot(timestamps, temperatures)
-            plt.ylabel('windspeed')
-      
+            metadata = self.metadata[2]
+
+        elif caption == 'Show ' + self.metadata[3]:
+            plt.plot(timestamps, pressure)
+            metadata = self.metadata[3]
+        else:
+            metadata = ''
+        
         plt.xlabel('Timestamp')
-        plt.title('Temperature over Time in Wippenham')
+        plt.ylabel(metadata) 
+        plt.title(metadata + ' over time') 
+        
         plt.xticks(rotation=45)
         plt.show()  
 

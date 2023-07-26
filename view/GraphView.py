@@ -13,10 +13,11 @@ class GraphView(tk.Tk, View):
     #-----------------------------------------------------------------------
     PAD = 10
     BTN_CAPTION = [
-        "Show temperature",
-        "Show humidity",
-        "Show windspeed",
-        "Exit"
+        'Show temperature',
+        'Show humidity',
+        'Show windspeed',
+        'Show pressure',
+        'Exit'
     ]
     
     
@@ -28,7 +29,7 @@ class GraphView(tk.Tk, View):
     """
     def __init__(self, controller):
         super().__init__()
-        self.title("Graph view")
+        self.title('Graph view')
         self.graphController = controller
     
         self._make_mainFrame()
@@ -50,7 +51,7 @@ class GraphView(tk.Tk, View):
         Sets view's title.
     """
     def _make_title(self):
-        title = ttk.Label(self.mainFrame, text="Database Manager", font=("Helvetica", 20))
+        title = ttk.Label(self.mainFrame, text='Database Manager', font=('Helvetica', 20))
         title.pack(padx=self.PAD, pady=self.PAD)
     
     """
@@ -58,15 +59,15 @@ class GraphView(tk.Tk, View):
     """
     def _make_options(self):
         frame_btn = ttk.Frame(self.mainFrame)
-        frame_btn.pack(fill="x")
+        frame_btn.pack(fill='x')
         
         for caption in self.BTN_CAPTION:
-            if caption == "Exit":
+            if caption == 'Exit':
                 btn = ttk.Button(frame_btn, text=caption, command=self.closeAllWindows)
             else:
                 btn = ttk.Button(frame_btn, text=caption, command=lambda txt=caption: self.graphController.btnClicked(txt))
             
-            btn.pack(fill="x")
+            btn.pack(fill='x')
 
     """
     @Overrite
@@ -82,7 +83,7 @@ class GraphView(tk.Tk, View):
         return
     
     """
-        Close all figures when exiting the windows
+        Close all figures when exiting the window
     """
     def closeAllWindows(self):
         self.graphController.closeAllWindows()
