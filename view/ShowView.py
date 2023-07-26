@@ -19,6 +19,7 @@ class ShowView(tk.Tk, View):
     COLUMN_WIDTH = 200
     TEMPERATURE = ""
     OBJECT_ID = ""
+    DATA=""
     
     BTN_CAPTION = [
         "Update Data",
@@ -55,19 +56,9 @@ class ShowView(tk.Tk, View):
     def _on_treeview_select(self,event):
         item_id = self.treeview.focus()
         data = self.treeview.item(item_id)
-        self.showController.item_selected(self.getObjectID(data))
-        self._display_selected_item(data)
         self.OBJECT_ID = self.getObjectID(data)
-
-    def getObjectID(self,s):
-        s = s["values"]
-        result = str(s).split(',')[self.find_heading("ID")].replace("[","").replace("]","")
-        return int(result)
-    
-    def getTemperature(self,s):
-        s = s["values"]
-        result = str(s).split(',')[self.find_heading("temperature")].replace("[","").replace("]","")
-        return int(result)
+        self._display_selected_item(self.showController.item_selected(self.create_dict()))
+        
       
     def find_heading(self,s):
         headings = self.treeview["columns"]
@@ -94,11 +85,6 @@ class ShowView(tk.Tk, View):
         self.lblCit .pack(side = side)
         self.tbCit = tk.Text(self,  height=1, width=10,bg=color) 
         self.tbCit .pack(side = side)
-        
-        self.lblID = tk.Label(self, text="ID",font=('Helvetica', 11), width=10)  
-        self.lblID .pack(side = side)
-        self.tbID = tk.Text(self,  height=1, width=4,bg=color) 
-        self.tbID .pack(side = side)
         
         self.lblpre = tk.Label(self, text="pressure",font=('Helvetica', 11), width=10)  
         self.lblpre .pack(side = side)
@@ -188,12 +174,12 @@ class ShowView(tk.Tk, View):
     """
     def create_dict(self):
             data = {
+                'ID': self.OBJECT_ID,
                 'temperature': self._get_updated_temperature(),
                 'humidity': self.tbHum.get("1.0",'end-1c'),
                 'city': self.tbCit.get("1.0",'end-1c'),
                 'street': self.tbstr.get("1.0",'end-1c'),
                 'street number': self.tbNo.get("1.0",'end-1c'),
-                'id': self.tbID.get("1.0",'end-1c'),
                 'windSpeed': self.tbWi.get("1.0",'end-1c'),
                 'pressure': self.tbpre.get("1.0",'end-1c'),
 
@@ -203,10 +189,40 @@ class ShowView(tk.Tk, View):
     """
         Display the selected item in the treeview
     """
-    def _display_selected_item(self, item):        
+    def _display_selected_item(self, data):        
         self.tbTemp.delete("1.0",tk.END)
-        self.tbTemp.insert(tk.END, self.getTemperature(item))
-        self.TEMPERATURE = self.getTemperature(item)
+        self.tbWi.delete("1.0",tk.END)
+        self.tbCit.delete("1.0",tk.END)
+        self.tbstr.delete("1.0",tk.END)
+        self.tbpre.delete("1.0",tk.END)
+        self.tbHum.delete("1.0",tk.END)
+        self.tbNo.delete("1.0",tk.END)
+
+        print(type(data))
+        print(data[0].keys())
+        print(data)
+        print(data)
+        self.tbTemp.insert(tk.END, data['metadata.temperature'] )
+        # self.tbWi.insert(tk.END, self.getTemperature(item))
+        # self.tbCit.insert(tk.END, self.getTemperature(item))
+        # self.tbstr.insert(tk.END, self.getTemperature(item))
+        # self.tbpre.insert(tk.END, self.getTemperature(item))
+        # self.tbHum.insert(tk.END, self.getTemperature(item))
+        # self.tbNo.insert(tk.END, self.getTemperature(item))
+        # self.TEMPERATURE = self.getTemperature(item)
+    
+
+    
+    def getObjectID(self,s):
+        s = s["values"]
+        result = str(s).split(',')[self.find_heading("ID")].replace("[","").replace("]","")
+        return int(result)
+    
+    def getTemperature(self,s):
+        s = s["values"]
+        result = str(s).split(',')[self.find_heading("temperature")].replace("[","").replace("]","")
+        return int(result)
+    
     
     def _get_updated_temperature(self):
         temp = self.tbTemp.get("1.0",'end-1c') # remove last character

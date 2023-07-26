@@ -44,8 +44,9 @@ class ShowController(Controller):
         data = self.database.getAll()
         return data
 
-    def item_selected(self,selected_item):
-        pass
+    def item_selected(self,data):
+        return self.database.get_One_Data_by_id(view_dict = data)
+    
            
     
     """

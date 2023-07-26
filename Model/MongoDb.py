@@ -4,7 +4,7 @@ import numpy as np
 from model import OpenWeather
 from bson.objectid import ObjectId
 import csv
-
+from bson.json_util import dumps, loads
 
 
 class Database:
@@ -106,6 +106,12 @@ class Database:
     def findData(self, query):
         results = self.collection.find(query)
         return results
+    
+    def get_One_Data_by_id(self,view_dict):
+        id = view_dict["ID"]
+        cursor =  self.collection.find({'metadata.ID': id })
+        return list(cursor)
+        #return dumps(list(cursor), indent = 2) 
 
     def getAll(self):
         results = self.collection.find()
@@ -117,7 +123,7 @@ class Database:
         self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.temperature': temperature}},multi=True)
         
     def delete_item_by_id(self, view_dict):
-        id = view_dict["id"]
+        id = view_dict["ID"]
         self.collection.delete_many({'metadata.ID': id })
         
     def insert_item(self,view_dict):
