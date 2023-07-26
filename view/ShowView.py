@@ -175,7 +175,7 @@ class ShowView(tk.Tk, View):
     def create_dict(self):
             data = {
                 'ID': self.OBJECT_ID,
-                'temperature': self._get_updated_temperature(),
+                'temperature': self.tbTemp.get("1.0",'end-1c'),
                 'humidity': self.tbHum.get("1.0",'end-1c'),
                 'city': self.tbCit.get("1.0",'end-1c'),
                 'street': self.tbstr.get("1.0",'end-1c'),
@@ -198,19 +198,15 @@ class ShowView(tk.Tk, View):
         self.tbHum.delete("1.0",tk.END)
         self.tbNo.delete("1.0",tk.END)
 
-        print(type(data))
-        print(data[0].keys())
-        print(data)
-        print(data)
-        self.tbTemp.insert(tk.END, data['metadata.temperature'] )
-        # self.tbWi.insert(tk.END, self.getTemperature(item))
-        # self.tbCit.insert(tk.END, self.getTemperature(item))
-        # self.tbstr.insert(tk.END, self.getTemperature(item))
-        # self.tbpre.insert(tk.END, self.getTemperature(item))
-        # self.tbHum.insert(tk.END, self.getTemperature(item))
-        # self.tbNo.insert(tk.END, self.getTemperature(item))
-        # self.TEMPERATURE = self.getTemperature(item)
-    
+        print(data[0]['metadata']['temperature'])
+
+        self.tbTemp.insert(tk.END, data[0]['metadata']['temperature'])
+        self.tbWi.insert(tk.END, data[0]['metadata']['windSpeed'])
+        self.tbCit.insert(tk.END, data[0]['metadata']['city'])
+        self.tbstr.insert(tk.END, data[0]['metadata']['street'])
+        self.tbpre.insert(tk.END, data[0]['metadata']['pressure'])
+        self.tbHum.insert(tk.END, data[0]['metadata']['humidity'])
+        self.tbNo.insert(tk.END, data[0]['metadata']['street number'])
 
     
     def getObjectID(self,s):
@@ -218,16 +214,7 @@ class ShowView(tk.Tk, View):
         result = str(s).split(',')[self.find_heading("ID")].replace("[","").replace("]","")
         return int(result)
     
-    def getTemperature(self,s):
-        s = s["values"]
-        result = str(s).split(',')[self.find_heading("temperature")].replace("[","").replace("]","")
-        return int(result)
-    
-    
-    def _get_updated_temperature(self):
-        temp = self.tbTemp.get("1.0",'end-1c') # remove last character
-        print(temp)
-        return temp
+
 
 
     def _refresh_treeview(self):
