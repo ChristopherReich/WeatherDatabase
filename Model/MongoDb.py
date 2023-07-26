@@ -11,6 +11,7 @@ class Database:
 
     def __init__(self, name):
         self.database_name = name
+        self.location = OpenWeather.Location('Wippenham', 'Bruck', 8)
         self.Connect_Database() # working on local database, because cloud database needs static ip adress
         self.Create_Collection('WeatherCollection')
         
@@ -43,6 +44,7 @@ class Database:
             self.db = client[self.database_name]
             print('Cloud Database created...')
 
+
     def Create_Collection(self, collection_name):
         if collection_name in self.db.list_collection_names():
             pass
@@ -58,53 +60,60 @@ class Database:
             print('Collection created...')
         self.collection = self.db[collection_name]
 
-    def Insert_OpenWeather_Data(self, location):
-        data = location.GetWeatherData()
+
+    def insert_OpenWeather_Data(self):
+        ow_data = self.location.GetWeatherData()        
+        timestamp = datetime.now()
+
+        data = {
+                'metadata': {   'id' : timestamp.__hash__(),
+                                'temperature': ow_data['temperature'],
+                                'humidity' : ow_data['humidity'],
+                                'windSpeed' : ow_data['windSpeed'],
+                                'pressure' : ow_data['pressure'],
+                                
+                                }, 
+                'location': {
+                                    'city': self.location.city,
+                                    'street' : self.location.street,
+                                    'street number' : self.location.street_number
+                                },
+                'timestamp': timestamp
+            }
         self.collection.insert_one(data)
         print('Insert 1 dataset...')
 
-    def Insert_Sample_Data(self, location):
-        data = {
-            'location': {
-                'city': location.city,
-                'street' : location.street,
-                'street number' : location.street_number
-            },
-            'timestamp': datetime.now(),
-            'temperature': np.random.randint(0, 30),
-            'humidity' : np.random.randint(0,100),
-            'windSpeed' : np.random.randint(0,50),
-            'pressure' : np.random.randint(1000, 1050)           
-        }
-
-        self.collection.insert_one(data)
-        print('Insert 1 sample dataset...')
-
-    def Create_Sample_Dataset(self, location):  
+    """
+        Creates a sample dataset
+    """
+    def Create_Sample_Dataset(self):  
         """
         Creates Sample Dataset modified from Openweather Map
         """
         dataList = []
         for i in range(24*4,0,-1):
             timeOffset = timedelta(minutes = i*15)
+            timestamp = datetime.now() - timeOffset
             
             data = {
-                'metadata': {   'ID': i,
+                'metadata': {   'id' : timestamp.__hash__(),
                                 'temperature': np.random.randint(0, 30),
                                 'humidity' : np.random.randint(0,100),
                                 'windSpeed' : np.random.randint(0,50),
                                 'pressure' : np.random.randint(1000, 1050),
-                                'city': location.city,
-                                'street' : location.street,
-                                'street number' : location.street_number,
-                                'time': datetime.now() - timeOffset
+                                
                                 }, 
-                'timestamp': datetime.now() - timeOffset
+                'location': {
+                                    'city': self.location.city,
+                                    'street' : self.location.street,
+                                    'street number' : self.location.street_number
+                                },
+                'timestamp': timestamp
             }
             dataList.append(data)
 
         self.collection.insert_many(dataList)
-        print('Create test dataset...')
+        print('Create test dataset finished...')
 
     
     def get_One_Data_by_id(self,view_dict):
@@ -120,7 +129,7 @@ class Database:
         cursor =  self.collection.find({'metadata.ID': id })
         return list(cursor)
 
-    def getAll(self):
+    def get_all_data(self):
         """ gets all data/document from MongoDB
 
         Returns:
@@ -128,8 +137,14 @@ class Database:
         """
         results = self.collection.find()
         return results
+    
+
+    def get_item_by_id(self, id):
+        objInstance = ObjectId(id)
+        result = self.collection.find_one({'_id': objInstance})
+        return result
       
-    def update_item_by_id(self, view_dict):
+    def update_item_by_id(self, id, data):
         """ updates one single data/document from MongoDB
 
         Args:
@@ -137,30 +152,18 @@ class Database:
             find the document
 
         """
-        cit = view_dict["city"]
-        stt = view_dict["street"]
-        sNo = view_dict["street number"]
-        hum = view_dict["humidity"]
-        tem = view_dict["temperature"]
-        win = view_dict["windSpeed"]
-        pre = view_dict["pressure"]
-        id = view_dict["ID"]
-        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.city': cit}},multi=True)
-        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.street': stt}},multi=True)
-        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.street number': sNo}},multi=True)
-        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.humidity': hum}},multi=True)
-        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.temperature': tem}},multi=True)
-        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.windSpeed': win}},multi=True)
-        self.collection.update({'metadata.ID': id } , {"$set": { 'metadata.pressure': pre}},multi=True)
+        self.collection.update({'metadata.id': id }  , {"$set": { 'metadata.humidity': data['humidity']}},multi=True)
+        self.collection.update({'metadata.id': id } , {"$set": { 'metadata.temperature': data['temperature']}},multi=True)
+        self.collection.update({'metadata.id': id } , {"$set": { 'metadata.windSpeed': data['windSpeed']}},multi=True)
+        self.collection.update({'metadata.id': id } , {"$set": { 'metadata.pressure': data['pressure']}},multi=True)
         
-    def delete_item_by_id(self, view_dict):
+    def delete_item_by_id(self, id):
         """ Delete on single document/data from MongoDB
 
         Args:
             view_dict (dict): necessary information from View is only the id
         """
-        id = view_dict["ID"]
-        self.collection.delete_many({'metadata.ID': id })
+        self.collection.delete_many({'metadata.id': id})
         
     def insert_item(self,view_dict):
         """inserts a single data. ID is appended to the highest occurring ID
@@ -189,6 +192,10 @@ class Database:
         }
         self.collection.insert(data)
         print('Inserted dataset...')
+
+    def insert_OpenWeather_data(self, location):
+        data = location.GetWeatherData()
+        self.collection.insert_one(data)
         
     def export_To_CSV(self,path):
         """ exports to CSV makes a new CSV file on the desired path
@@ -196,7 +203,7 @@ class Database:
         Args:
             path (string):  from ask directory
         """
-        data = self.getAll()
+        data = self.get_all_data()
         csv_file= path
         with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
             fieldnames = list(data[0].keys())

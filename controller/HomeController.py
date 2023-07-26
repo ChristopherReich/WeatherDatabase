@@ -29,10 +29,9 @@ class HomeController(Controller):
             c = Core.openController("graph")
             c.main()
         elif caption == "Create sample data":
-            home = OpenWeather.Location('Wippenham', 'Bruck', 8)
             self.database = MongoDb.Database('WeatherDatabase')
             self.database.Create_Collection('WeatherCollection')
-            self.database.Create_Sample_Dataset(home, 'WeatherCollection')
+            self.database.Create_Sample_Dataset()
             
     """
         @Override

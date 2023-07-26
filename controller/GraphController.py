@@ -44,7 +44,7 @@ class GraphController(Controller):
         @behaviour when a button is clicked
     """
     def btnClicked(self, caption):
-        data = self.database.getAll()
+        data = self.database.get_all_data()
         timestamps = []
         temperatures = []
         humidity = []
@@ -52,7 +52,7 @@ class GraphController(Controller):
         pressure = []
 
         for result in data:
-            timestamps.append(result['metadata']['time'])
+            timestamps.append(result['timestamp'])
             temperatures.append(result['metadata']['temperature'])
             humidity.append(result['metadata']['humidity'])
             windSpeed.append(result['metadata']['windSpeed'])

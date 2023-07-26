@@ -15,7 +15,6 @@ class ShowController(Controller):
     #-----------------------------------------------------------------------
     def __init__(self):
         self.database = MongoDb.Database('WeatherDatabase')
-        #self.database.set_Collection('WeatherCollection')
         self.showView = self.loadView('show')
         self.core = Core()
 
@@ -23,18 +22,24 @@ class ShowController(Controller):
     """
         @behaviour when a button is clicked
     """   
-    def btnClicked(self, caption , data):
+    def btnClicked(self, caption):
         if caption == 'Update Data':
-            self.database.update_item_by_id(view_dict = data)
-            self.showView._show_data()
+            selected_item = self.get_selected_item()
+            data = self.showView.create_dict_from_input()
+            self.database.update_item_by_id(selected_item['metadata']['id'], data)
+            self.showView.refresh_Treeview()
+
         if caption == 'Delete':
-            self.database.delete_item_by_id(view_dict= data)
-            self.showView._show_data()
+            selected_item = self.get_selected_item()
+            self.database.delete_item_by_id(selected_item['metadata']['id'])
+            self.showView.refresh_Treeview()
+
         if caption == 'Data Export':
             self.database.export_To_CSV(self.showView._save_path_dir())
+
         if caption == 'Insert':
-            self.database.insert_item(view_dict = data)
-            self.showView._show_data()
+            self.database.insert_OpenWeather_Data()
+            self.showView.refresh_Treeview()
 
        
     #-----------------------------------------------------------------------
@@ -43,14 +48,30 @@ class ShowController(Controller):
     """
         @return All customers in database
     """
-    def getData(self):
-        data = self.database.getAll()
+    def get_data_from_database(self):
+        data = self.database.get_all_data()
         return data
 
-    def item_selected(self,data):
-        return self.database.get_One_Data_by_id(view_dict = data)
-    
-           
+
+
+    """
+        This method is bound with the <<TreeviewSelect>> event of the Treeview list.
+    """
+    def display_selected_item(self,event):       
+        #Get the selected item
+        selected_item = self.get_selected_item()
+        self.showView.display_selected_item(selected_item)
+
+
+    """
+        Returns the selected item
+    """
+    def get_selected_item(self):
+        focused_item = self.showView.treeview.focus()
+        raw_item = self.showView.treeview.item(focused_item)     
+        item_id = raw_item['values'][5]   # Object ID of the item            
+        return self.database.get_item_by_id(item_id)
+
     
     """
         Opens EditController
