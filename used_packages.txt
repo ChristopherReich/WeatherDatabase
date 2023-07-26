@@ -1,0 +1,7 @@
+Used Python packages with versions in the project:
+requests==2.26.0
+matplotlib==3.5.0
+ast==2.12.11
+numpy==1.24.3
+geopy==2.2.0
+pymongo==4.4.1
