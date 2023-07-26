@@ -20,7 +20,7 @@ class ShowController(Controller):
         self.core = Core()
 
         
-    def btnClicked(self, caption,data):
+    def btnClicked(self, caption , data):
         if caption == "Update Data":
             self.database.update_item_by_id(view_dict = data)
             self.showView._show_data()
@@ -29,6 +29,9 @@ class ShowController(Controller):
             self.showView._show_data()
         if caption == "Data Export":
             self.database.export_To_CSV(self.showView._save_path_dir())
+        if caption == "Insert":
+            self.database.insert_item(view_dict = data)
+            self.showView._show_data()
 
        
     #-----------------------------------------------------------------------

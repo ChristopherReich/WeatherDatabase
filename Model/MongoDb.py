@@ -120,6 +120,29 @@ class Database:
         id = view_dict["id"]
         self.collection.delete_many({'metadata.ID': id })
         
+    def insert_item(self,view_dict):
+        database_data = self.getAll()
+        #Find highest ID
+        id_list =[]
+        for row in database_data:
+            id_list.append(int(row["metadata"]["ID"]))
+        id = max(id_list)
+        data = {
+            'metadata': {   'ID': id+1,
+                            'temperature': int(view_dict["temperature"]),
+                            'humidity' : int(view_dict["humidity"]),
+                            'windSpeed' : int(view_dict["windSpeed"]),
+                            'pressure' : int(view_dict["pressure"]),
+                            'city': view_dict["city"],
+                            'street' : view_dict["street"],
+                            'street number' : view_dict["street number"],
+                            'time': datetime.now()
+                            }, 
+            'timestamp': datetime.now()
+        }
+        self.collection.insert(data)
+        print('Inserted dataset...')
+        
     def export_To_CSV(self,path):
         data = self.getAll()
         csv_file= path

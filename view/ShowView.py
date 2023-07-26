@@ -115,10 +115,10 @@ class ShowView(tk.Tk, View):
         self.tbNo = tk.Text(self,  height=1, width=4,bg=color) 
         self.tbNo .pack(side = side)
         
-        self.lblTi = tk.Label(self, text="Time",font=('Helvetica', 11), width=10)  
-        self.lblTi .pack(side = side)
-        self.tbTi = tk.Text(self,  height=1, width=15,bg=color) 
-        self.tbTi .pack(side = side)
+        self.lblWi = tk.Label(self, text="WindSpeed",font=('Helvetica', 11), width=10)  
+        self.lblWi .pack(side = side)
+        self.tbWi = tk.Text(self,  height=1, width=15,bg=color) 
+        self.tbWi .pack(side = side)
              
     """
         Open path
@@ -183,19 +183,19 @@ class ShowView(tk.Tk, View):
             else:
                 btn = ttk.Button(frame_btn, text=caption, command=lambda txt=caption: self.showController.btnClicked(txt,self.create_dict()))
             btn.pack(side = "left")
-    
+    """
+        creates the dict from all inputs
+    """
     def create_dict(self):
             data = {
-                'ID': self.OBJECT_ID,
                 'temperature': self._get_updated_temperature(),
                 'humidity': self.tbHum.get("1.0",'end-1c'),
                 'city': self.tbCit.get("1.0",'end-1c'),
                 'street': self.tbstr.get("1.0",'end-1c'),
                 'street number': self.tbNo.get("1.0",'end-1c'),
                 'id': self.tbID.get("1.0",'end-1c'),
-                'Time': self.tbTi.get("1.0",'end-1c'),
+                'windSpeed': self.tbWi.get("1.0",'end-1c'),
                 'pressure': self.tbpre.get("1.0",'end-1c'),
-                'id': self.tbID.get("1.0",'end-1c'),
 
                 }
             return data
